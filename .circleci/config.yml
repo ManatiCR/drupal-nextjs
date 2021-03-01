@@ -78,31 +78,31 @@ jobs:
             fi
             echo "Cleaning cache..."
             ./vendor/bin/drush cr
-      - run:
-          name: Build site from DB
-          command: |
-            git config --global user.email $GIT_EMAIL
-            git config --global user.name $GIT_NAME
-            echo 'Host *' >> /root/.ssh/config
-            echo '   StrictHostKeyChecking no' >> /root/.ssh/config
-            terminus backup:get $PANTHEON_PROJECT_NAME.live --element=db --to=./database.sql.gz
-            echo "Drop Database..."
-            ./vendor/bin/drush sql:drop -y
-            echo "Import database..."
-            gunzip -c database.sql.gz | ./vendor/bin/drush sqlc
-            echo "Update database..."
-            ./vendor/bin/drush updb --no-cache-clear -y
-            echo "Cleaning cache..."
-            ./vendor/bin/drush cr
-            echo "Importing config..."
-            ./vendor/bin/drush config:set "system.site" uuid "$SITE_UUID" -y
-            ./vendor/bin/drush cr
-            ./vendor/bin/drush cim -y
-            ./vendor/bin/drush cim -y
-            echo "Sanitizing database..."
-            ./vendor/bin/drush sqlsan --sanitize-password=admin -y
-            echo "Cleaning cache..."
-            ./vendor/bin/drush cr
+      # - run:
+      #     name: Build site from DB
+      #     command: |
+      #       git config --global user.email $GIT_EMAIL
+      #       git config --global user.name $GIT_NAME
+      #       echo 'Host *' >> /root/.ssh/config
+      #       echo '   StrictHostKeyChecking no' >> /root/.ssh/config
+      #       terminus backup:get $PANTHEON_PROJECT_NAME.live --element=db --to=./database.sql.gz
+      #       echo "Drop Database..."
+      #       ./vendor/bin/drush sql:drop -y
+      #       echo "Import database..."
+      #       gunzip -c database.sql.gz | ./vendor/bin/drush sqlc
+      #       echo "Update database..."
+      #       ./vendor/bin/drush updb --no-cache-clear -y
+      #       echo "Cleaning cache..."
+      #       ./vendor/bin/drush cr
+      #       echo "Importing config..."
+      #       ./vendor/bin/drush config:set "system.site" uuid "$SITE_UUID" -y
+      #       ./vendor/bin/drush cr
+      #       ./vendor/bin/drush cim -y
+      #       ./vendor/bin/drush cim -y
+      #       echo "Sanitizing database..."
+      #       ./vendor/bin/drush sqlsan --sanitize-password=admin -y
+      #       echo "Cleaning cache..."
+      #       ./vendor/bin/drush cr
       - run:
           name: Coding Standards Linters
           command: |
