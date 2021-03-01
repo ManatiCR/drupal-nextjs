@@ -1,0 +1,19 @@
+uuid: d2cb38d0-52f9-4d2f-9b42-86b817640869
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.media.field_media_oembed_instagram
+    - media.type.instagram_post
+id: media.instagram_post.field_media_oembed_instagram
+field_name: field_media_oembed_instagram
+entity_type: media
+bundle: instagram_post
+label: 'Instagram URL'
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

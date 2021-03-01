@@ -1,0 +1,27 @@
+uuid: 69b8f4af-10e8-43e4-8399-914338c4f18b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.media.twitter_post.field_media_twitter
+    - media.type.twitter_post
+  module:
+    - media_entity_twitter
+id: media.twitter_post.default
+targetEntityType: media
+bundle: twitter_post
+mode: default
+content:
+  field_media_twitter:
+    label: hidden
+    weight: 0
+    settings:
+      conversation: false
+    third_party_settings: {  }
+    type: twitter_embed
+    region: content
+hidden:
+  created: true
+  name: true
+  thumbnail: true
+  uid: true

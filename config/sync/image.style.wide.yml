@@ -1,0 +1,17 @@
+uuid: 4f575551-c75b-442b-92e5-5cbde3551557
+langcode: en
+status: true
+dependencies: {  }
+name: wide
+label: 'Wide (950 width)'
+effects:
+  9b3aaba6-7991-4cb1-b082-31df71246d79:
+    uuid: 9b3aaba6-7991-4cb1-b082-31df71246d79
+    id: image_scale
+    weight: 1
+    data:
+      width: 950
+      height: null
+      upscale: true
+      retinafy: 0
+      multiplier: '2'

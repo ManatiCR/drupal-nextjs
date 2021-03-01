@@ -1,0 +1,34 @@
+uuid: bacf701c-eb5d-44e5-80b5-e0378f901965
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.media.wide
+    - field.field.media.image.field_media_image
+    - image.style.wide_retina
+    - media.type.image
+  module:
+    - svg_image
+id: media.image.wide
+targetEntityType: media
+bundle: image
+mode: wide
+content:
+  field_media_image:
+    label: hidden
+    weight: 0
+    settings:
+      image_style: wide_retina
+      image_link: ''
+      svg_render_as_image: true
+      svg_attributes:
+        width: null
+        height: null
+    third_party_settings: {  }
+    type: image
+    region: content
+hidden:
+  created: true
+  name: true
+  thumbnail: true
+  uid: true

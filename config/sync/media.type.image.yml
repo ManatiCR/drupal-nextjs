@@ -1,0 +1,16 @@
+uuid: 04b9e3d5-b22a-450a-9b15-85edabbd51d7
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: FEjSJY3rqC417K5vVvLI_BzUiyvvSuyhORgYKFOSmlo
+id: image
+label: Image
+description: 'This media entity allows you to add an Image.'
+source: image
+queue_thumbnail_downloads: false
+new_revision: false
+source_configuration:
+  source_field: field_media_image
+field_map:
+  name: name

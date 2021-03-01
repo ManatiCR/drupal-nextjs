@@ -1,0 +1,17 @@
+uuid: 88357453-7752-49a4-8b65-703cd029d725
+langcode: en
+status: true
+dependencies: {  }
+name: medium
+label: 'Medium (250 width)'
+effects:
+  1d82a8f8-2ebe-4436-a744-58d2a791974a:
+    uuid: 1d82a8f8-2ebe-4436-a744-58d2a791974a
+    id: image_scale
+    weight: 2
+    data:
+      width: 250
+      height: null
+      upscale: true
+      retinafy: 0
+      multiplier: '2'

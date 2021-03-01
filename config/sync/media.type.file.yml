@@ -1,0 +1,15 @@
+uuid: f633d170-b772-4659-a467-a3c428d5ac5c
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: NOZvPr-FluGhh80Cz2QAyZLZFAPQPAU8CgiSJvL6ekI
+id: file
+label: File
+description: 'This media entity allows you to add a File.'
+source: file
+queue_thumbnail_downloads: false
+new_revision: false
+source_configuration:
+  source_field: field_media_file
+field_map: {  }

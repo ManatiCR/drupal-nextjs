@@ -1,0 +1,19 @@
+uuid: 3031ef3d-ad3e-4cb7-ac24-f734d9f90bdf
+langcode: en
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus: {  }
+    parent: ''
+_core:
+  default_config_hash: gw3afJc3GE1JbFATc8UGUvzRKWXPlgrjz9MLHPOkB4A
+name: 'Landing page'
+type: landing_page
+description: 'This content type allows you to create landing pages.'
+help: ''
+new_revision: true
+preview_mode: 1
+display_submitted: false
