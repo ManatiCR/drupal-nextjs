@@ -29,10 +29,23 @@ chirripo drush cex -- -y
 
 Copy the `core.extension` file from `config/dev` to `config/sync` folder, then get ride of `devel`, `stage_file_proxy` and `views_ui` lines.
 
+Setup the git prject:
 
+```bash
+git init
+git checkout -b develop
+git add -A
+git commit -m "Initial commit"
+git remote add origin REMOTE_GIT_REPO
+git push origin develop
+```
 
-PANTHEON SITE
-1.  Create an empty pantheon site
-2.  Upload the required fields (with the vendor folder inside) https://pantheon.io/docs/guides/drupal-8-composer-no-ci
-3.  Set the env variables
-4.  Set the tokens
+## Panthon setup
+
+Create a Drupal 8 in [Pantheon](https://pantheon.io/), you should initialize **test** and **live** environments, also you need to create a backup from live in order to use CircleCI.
+
+Go to the [CircleCI](https://circleci.com/) and start building the site.
+
+Setup the CircleCI env environments listed at the top of the `./circleci/config.yml` file.
+
+Add to the CircleCI the **ssh-keys**
