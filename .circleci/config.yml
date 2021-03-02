@@ -183,7 +183,7 @@ jobs:
             terminus env:deploy $PANTHEON_PROJECT_NAME.test --note "Autodeploy from Circle" -y
             terminus env:clone-content $PANTHEON_PROJECT_NAME.live test -y
             terminus drush $PANTHEON_PROJECT_NAME.test -- cr
-            terminus drush PANTHEON_PROJECT_NAME.test -- sqlsan --sanitize-password=test -y
+            terminus drush $PANTHEON_PROJECT_NAME.test -- sqlsan --sanitize-password=test -y
             terminus drush $PANTHEON_PROJECT_NAME.test -- updb -y
             terminus drush $PANTHEON_PROJECT_NAME.test -- cr
             terminus drush $PANTHEON_PROJECT_NAME.test -- cim -y
