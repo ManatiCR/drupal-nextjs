@@ -287,8 +287,7 @@ jobs:
           name: Lighthouse
           command: |
             cd ./drupal
-            npm install
-            lhci autorun --collect.url=$SITE_URL
+            ./node_modules/.bin/lhci autorun --collect.url=$SITE_URL
 
 workflows:
   version: 2
