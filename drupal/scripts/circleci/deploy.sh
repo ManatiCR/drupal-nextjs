@@ -16,8 +16,8 @@ fi
 if [ -d ./web/sites/default/files ]; then
   rm -rf ./web/sites/default/files
 fi
-cp -r ./drupal/config ./drupal/drush ./drupal/modules ./drupal/scripts ./drupal/settings ./drupal/themes ./drupal/vendor ./drupal/web $CLONEFOLDER/
-cp ./drupal/{.drush-lock-update,composer.json,composer.lock,composer.patches.json,package.json,package-lock.json,pantheon.yml} $CLONEFOLDER/
+cp -r config drush modules scripts settings themes vendor web $CLONEFOLDER/
+cp ./{.drush-lock-update,composer.json,composer.lock,composer.patches.json,package.json,package-lock.json,pantheon.yml} $CLONEFOLDER/
 cd $CLONEFOLDER
 composer prepare-for-pantheon
 git add --all .
