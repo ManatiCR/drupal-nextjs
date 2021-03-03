@@ -28,8 +28,8 @@ function manati_landing_pages_form_alter(&$form, &$form_state, $form_id) {
 function manati_landing_pages_node_update(EntityInterface $node) {
   if ($node->bundle() === 'landing_page') {
     $block_ids = [];
-    foreach($node->layout_builder__layout->getSections() as $section) {
-      foreach($section->getComponents() as $component) {
+    foreach ($node->layout_builder__layout->getSections() as $section) {
+      foreach ($section->getComponents() as $component) {
         $block = \Drupal::entityTypeManager()->getStorage('block_content')->loadRevision($component->get('configuration')['block_revision_id']);
         $block_ids[] = [
           'target_id' => $block->id(),
@@ -41,6 +41,9 @@ function manati_landing_pages_node_update(EntityInterface $node) {
   }
 }
 
+/**
+ * Helper function for save the node.
+ */
 function _manati_landing_pages_post_update($node) {
   if ($node) {
     $node->save();
