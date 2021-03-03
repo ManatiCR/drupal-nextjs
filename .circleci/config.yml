@@ -29,7 +29,11 @@ jobs:
           keys:
             - npm-cache-{{ checksum "./drupal/package.json" }}
             - composer-cache-{{ checksum "./drupal/composer.lock" }}
-      - run: npm install
+      - run:
+          name: npm Install
+          command: |
+            cd ./drupal
+            npm install
       - save_cache:
           key: npm-cache-{{ checksum "./drupal/package.json" }}
           paths:
