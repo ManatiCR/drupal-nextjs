@@ -281,9 +281,14 @@ jobs:
       - image: circleci/node:10.16-browsers
     working_directory: ~/local_site
     steps:
-      - checkout
-      - run: sudo npm install -g @lhci/cli@0.4.x
-      - run: lhci autorun --collect.url=$SITE_URL
+      - attach_workspace:
+          at: /var/www
+      - run:
+          name: Lighthouse
+          command: |
+            cd ./drupal
+            npm install
+            lhci autorun --collect.url=$SITE_URL
 
 workflows:
   version: 2
