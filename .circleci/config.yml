@@ -27,11 +27,11 @@ jobs:
       - add_ssh_keys:
       - restore_cache:
           keys:
-            - npm-cache-{{ checksum "package.json" }}
-            - composer-cache-{{ checksum "composer.lock" }}
+            - npm-cache-{{ checksum "./drupal/package.json" }}
+            - composer-cache-{{ checksum "./drupal/composer.lock" }}
       - run: npm install
       - save_cache:
-          key: npm-cache-{{ checksum "package.json" }}
+          key: npm-cache-{{ checksum "./drupal/package.json" }}
           paths:
             - node_modules
       - run:
@@ -57,7 +57,8 @@ jobs:
       - run:
           name: Build site from scratch
           command: |
-            cp ./.circleci/settings.secret.php ./settings/
+            cp ./.circleci/settings.secret.php ./drupal/settings/
+            cd ./drupal
             composer install
             chmod 777 -R ./web/sites/default/files
             /usr/bin/env PHP_OPTIONS="-d sendmail_path=`which true`"
@@ -85,6 +86,7 @@ jobs:
             git config --global user.name $GIT_NAME
             echo 'Host *' >> /root/.ssh/config
             echo '   StrictHostKeyChecking no' >> /root/.ssh/config
+            cd ./drupal
             terminus backup:get $PANTHEON_PROJECT_NAME.live --element=db --to=./database.sql.gz
             echo "Drop Database..."
             ./vendor/bin/drush sql:drop -y
@@ -106,12 +108,14 @@ jobs:
       - run:
           name: Coding Standards Linters
           command: |
+            cd ./drupal
             ./node_modules/.bin/gulp phplint
             ./node_modules/.bin/gulp drupalcs
             ./node_modules/.bin/gulp eslint
       - run:
           name: Lighthouse
           command: |
+            cd ./drupal
             /etc/init.d/nginx start > nginx.log &
             /etc/init.d/php7.3-fpm start > php7.3-fpm.log &
             ./node_modules/.bin/lhci autorun --collect.url=http://local_site.local
@@ -136,7 +140,6 @@ jobs:
             php composer-setup.php && \
             php -r "unlink('composer-setup.php');"
             mv composer.phar /usr/bin/composer
-      - run: composer install
       - run:
           name: Login terminus
           command: |
@@ -151,7 +154,7 @@ jobs:
             echo 'Host *' >> /root/.ssh/config
             echo '   StrictHostKeyChecking no' >> /root/.ssh/config
             terminus connection:set $PANTHEON_PROJECT_NAME.dev git
-            ./scripts/circleci/deploy.sh master "Auto deploy triggered from master branch"
+            ./drupal/scripts/circleci/deploy.sh master "Auto deploy triggered from master branch"
             terminus connection:set $PANTHEON_PROJECT_NAME.dev sftp
             terminus drush $PANTHEON_PROJECT_NAME.dev -- si bloom --account-pass=admin -y
             terminus connection:set $PANTHEON_PROJECT_NAME.dev git
@@ -232,7 +235,6 @@ jobs:
             php composer-setup.php && \
             php -r "unlink('composer-setup.php');"
             mv composer.phar /usr/bin/composer
-      - run: composer install
       - run:
           name: Login terminus
           command: |
@@ -259,7 +261,7 @@ jobs:
             git config --global user.name $GIT_NAME
             echo 'Host *' >> /root/.ssh/config
             echo '   StrictHostKeyChecking no' >> /root/.ssh/config
-            ./scripts/circleci/deploy.sh $NEWBRANCH "Auto deploy triggered from master branch"
+            ./drupal/scripts/circleci/deploy.sh $NEWBRANCH "Auto deploy triggered from master branch"
             terminus drush $PANTHEON_PROJECT_NAME.$NEWBRANCH -- cr
             terminus drush $PANTHEON_PROJECT_NAME.$NEWBRANCH -- sqlsan -y
             terminus drush $PANTHEON_PROJECT_NAME.$NEWBRANCH -- updb -y
