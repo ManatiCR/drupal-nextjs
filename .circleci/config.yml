@@ -278,8 +278,8 @@ jobs:
 
   lighthouse-on-live:
     docker:
-      - image: circleci/node:10.16-browsers
-    working_directory: ~/local_site
+      - image: kporras07/docker-drupal-nginx:php-7.3.x-backstop
+    working_directory: /var/www/local_site
     steps:
       - attach_workspace:
           at: /var/www
