@@ -158,7 +158,8 @@ jobs:
             echo 'Host *' >> /root/.ssh/config
             echo '   StrictHostKeyChecking no' >> /root/.ssh/config
             terminus connection:set $PANTHEON_PROJECT_NAME.dev git
-            ./drupal/scripts/circleci/deploy.sh master "Auto deploy triggered from master branch"
+            cd ./drupal
+            ./scripts/circleci/deploy.sh master "Auto deploy triggered from master branch"
             terminus connection:set $PANTHEON_PROJECT_NAME.dev sftp
             terminus drush $PANTHEON_PROJECT_NAME.dev -- si bloom --account-pass=admin -y
             terminus connection:set $PANTHEON_PROJECT_NAME.dev git
@@ -265,7 +266,8 @@ jobs:
             git config --global user.name $GIT_NAME
             echo 'Host *' >> /root/.ssh/config
             echo '   StrictHostKeyChecking no' >> /root/.ssh/config
-            ./drupal/scripts/circleci/deploy.sh $NEWBRANCH "Auto deploy triggered from master branch"
+            cd ./drupal
+            ./scripts/circleci/deploy.sh $NEWBRANCH "Auto deploy triggered from master branch"
             terminus drush $PANTHEON_PROJECT_NAME.$NEWBRANCH -- cr
             terminus drush $PANTHEON_PROJECT_NAME.$NEWBRANCH -- sqlsan -y
             terminus drush $PANTHEON_PROJECT_NAME.$NEWBRANCH -- updb -y
