@@ -116,13 +116,13 @@ jobs:
             ./node_modules/.bin/gulp phplint
             ./node_modules/.bin/gulp drupalcs
             ./node_modules/.bin/gulp eslint
-      - run:
-          name: Lighthouse
-          command: |
-            cd ./drupal
-            /etc/init.d/nginx start > nginx.log &
-            /etc/init.d/php7.3-fpm start > php7.3-fpm.log &
-            ./node_modules/.bin/lhci autorun --collect.url=http://local_site.local
+      # - run:
+      #     name: Lighthouse
+      #     command: |
+      #       cd ./drupal
+      #       /etc/init.d/nginx start > nginx.log &
+      #       /etc/init.d/php7.3-fpm start > php7.3-fpm.log &
+      #       ./node_modules/.bin/lhci autorun --collect.url=http://local_site.local
       - persist_to_workspace:
           root: /var/www/
           paths: local_site
