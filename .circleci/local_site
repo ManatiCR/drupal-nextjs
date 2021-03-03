@@ -1,6 +1,6 @@
 server {
     listen 80;
-    root /var/www/local_site/web;
+    root /var/www/local_site/drupal/web;
     gzip_static on;
     fastcgi_read_timeout 300;
     location = /favicon.ico {
