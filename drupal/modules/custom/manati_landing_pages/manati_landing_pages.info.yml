@@ -1,0 +1,9 @@
+name: Manati Landing pages
+type: module
+description: This module provides the base landing page config in order to use Layout Builder.
+package: MANATI
+core: 8.x
+core_version_requirement: ^8 || ^9
+dependencies:
+  - drupal:node
+  - drupal:layout_builder

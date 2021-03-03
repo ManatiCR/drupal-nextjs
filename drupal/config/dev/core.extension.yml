@@ -28,7 +28,14 @@ module:
   image: 0
   image_style_quality: 0
   inline_form_errors: 0
+  jsonapi: 0
+  layout_builder: 0
+  layout_builder_browser: 0
+  layout_builder_iframe_modal: 0
+  layout_discovery: 0
   link: 0
+  manati_landing_pages: 0
+  manati_layout_builder: 0
   media: 0
   media_entity_facebook: 0
   media_entity_instagram: 0
@@ -49,6 +56,7 @@ module:
   responsive_image: 0
   retina_images: 0
   seckit: 0
+  serialization: 0
   shs: 0
   stage_file_proxy: 0
   svg_image: 0

@@ -1,0 +1,85 @@
+<?php
+
+/**
+ * @file
+ * This is the module to create custom layout builder sections.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\node\NodeInterface;
+
+/**
+ * Implements hook_plugin_filter_TYPE__CONSUMER_alter().
+ */
+function manati_layout_builder_plugin_filter_layout__layout_builder_alter(array &$definitions, array $extra) {
+  // Unset default layouts.
+  unset($definitions['layout_onecol']);
+  unset($definitions['layout_twocol_section']);
+  unset($definitions['layout_threecol_section']);
+  unset($definitions['layout_fourcol_section']);
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function manati_layout_builder_form_alter(array &$form, FormStateInterface $form_state, string $form_id) {
+  // Removing the block name field from all the block_content forms inside
+  // Layout builder.
+  $form_ids = ['layout_builder_update_block', 'layout_builder_add_block'];
+  if (in_array($form_id, $form_ids)) {
+    // Removig not required fields for block form inside Layout Builder.
+    if (isset($form['settings']['block_form'])) {
+      // Getting current time to autogenerate a name for the block.
+      $current_time = \Drupal::service('datetime.time')->getCurrentTime();
+      $date_formatted = \Drupal::service('date.formatter')->format($current_time, 'short');
+      // Altering Block name field - removing it from the form.
+      $form['settings']['label']['#access'] = FALSE;
+      $form['settings']['label']['#default_value'] = $form['settings']['block_form']['#block']->bundle() . ' ' . $date_formatted;
+      // Also removing option to show the Block name in its display.
+      $form['settings']['label_display']['#default_value'] = FALSE;
+      $form['settings']['label_display']['#access'] = FALSE;
+      if (!empty($form['settings']['view_mode']['#access'])) {
+        unset($form['settings']['view_mode']['#options']['default']);
+        $form['settings']['view_mode']['#title'] = t('Presentación');
+        $form['settings']['view_mode']['#required'] = TRUE;
+        $form['settings']['admin_label']['#weight'] = 0;
+        $form['settings']['view_mode']['#weight'] = 0;
+      }
+    }
+    // Removig not required fields for views form inside Layout Builder.
+    if (isset($form['settings']['views_label_checkbox'])) {
+      $form['settings']['views_label_checkbox']['#access'] = FALSE;
+      $form['settings']['views_label_fieldset']['#access'] = FALSE;
+      $form['settings']['views_label']['#access'] = FALSE;
+    }
+    // Removig not required fields for the webform form inside Layout Builder.
+    if (isset($form['settings']['webform_id'])) {
+      $form['settings']['default_data']['#access'] = FALSE;
+      $form['settings']['redirect']['#access'] = FALSE;
+    }
+  }
+
+}
+
+/**
+ * Implements hook_page_attachments().
+ */
+function manati_layout_builder_page_attachments(array &$attachments) {
+  $route_name = \Drupal::routeMatch()->getRouteName();
+  $node = \Drupal::routeMatch()->getParameter('node');
+  if ($route_name === 'layout_builder.overrides.node.view' ||
+    ($route_name === 'entity.node.canonical' && isset($node) && $node->bundle() === 'landing_page')) {
+    $attachments['#attached']['library'][] = 'manati_layout_builder/manati-layout-builder';
+  }
+}
+
+/**
+ * Implements hook_entity_delete().
+ */
+function manati_layout_builder_entity_delete(EntityInterface $entity) {
+  if ($entity instanceof NodeInterface && $entity->bundle() === 'landing_page') {
+    \Drupal::service('cron')->run();
+  }
+
+}

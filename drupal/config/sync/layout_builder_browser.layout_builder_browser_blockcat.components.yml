@@ -1,0 +1,7 @@
+uuid: 58554ba8-6f8e-458f-b5c1-98412e40d7cf
+langcode: en
+status: true
+dependencies: {  }
+id: components
+label: Components
+weight: null

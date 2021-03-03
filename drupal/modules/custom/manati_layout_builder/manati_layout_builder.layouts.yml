@@ -1,0 +1,39 @@
+one_column:
+  label: One column
+  category: MANATI
+  class: \Drupal\manati_layout_builder\Plugin\Layout\OneColClass
+  template: layouts/one-column
+  default_region: content
+  icon_map:
+    - [content]
+  regions:
+    content:
+      label: Content
+two_column:
+  label: Two column
+  category: MANATI
+  class: \Drupal\manati_layout_builder\Plugin\Layout\TwoColClass
+  template: layouts/two-column
+  default_region: first
+  icon_map:
+    - [first, second]
+  regions:
+    first:
+      label: First
+    second:
+      label: Second
+three_column:
+  label: Three column
+  category: MANATI
+  class: \Drupal\manati_layout_builder\Plugin\Layout\ThreeColClass
+  template: layouts/three-column
+  default_region: first
+  icon_map:
+    - [first, second, third]
+  regions:
+    first:
+      label: First
+    second:
+      label: Second
+    third:
+      label: Third

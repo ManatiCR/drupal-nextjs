@@ -1,0 +1,8 @@
+name: Manati Base Layouts
+type: module
+description: This module provides the base layouts for layout builder.
+package: MANATI
+core: 8.x
+core_version_requirement: ^8 || ^9
+'interface translation project': manati_layout_builder
+'interface translation server pattern': modules/custom/manati_layout_builder/translations/%project.%language.po

@@ -1,6 +1,10 @@
 
 {
   "patches": {
+    "drupal/core": {
+      "https://www.drupal.org/node/2942975": "https://www.drupal.org/files/issues/2020-07-07/2942975-116.patch",
+      "https://www.drupal.org/node/3066751": "https://www.drupal.org/files/issues/2020-06-12/3066751-42.patch"
+    },
     "drupal/media_entity_facebook": {
       "https://www.drupal.org/node/3120085": "https://www.drupal.org/files/issues/2020-03-31/3120085-media-library-add-5.patch"
     },

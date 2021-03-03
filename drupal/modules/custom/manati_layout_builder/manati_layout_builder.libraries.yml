@@ -1,0 +1,6 @@
+manati-layout-builder:
+  css:
+    layout:
+      css/manati-layout-builder.css: {}
+    component:
+      css/manati-layout-builder-modal.css: {}

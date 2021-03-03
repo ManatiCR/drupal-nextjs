@@ -4,6 +4,8 @@ status: false
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
+    - field.field.node.landing_page.field_blocks
+    - field.field.node.landing_page.layout_builder__layout
     - node.type.landing_page
   module:
     - user
@@ -19,4 +21,6 @@ content:
     settings: {  }
     third_party_settings: {  }
     region: content
-hidden: {  }
+hidden:
+  field_blocks: true
+  layout_builder__layout: true

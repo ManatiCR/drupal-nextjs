@@ -1,0 +1,79 @@
+/* Responsive dialog */
+
+@media screen and (max-width: 1000px) {
+  .ui-dialog {
+    width: 98vw !important;
+    left: 1vw !important;
+  }
+}
+
+/* Multiple fixes for block creation forms */
+
+#layout-builder-modal .form-item__dropdown {
+  border: none;
+}
+
+#layout-builder-modal .form-item__dropdown::after {
+  content: none;
+}
+
+#layout-builder-modal .form-item {
+  max-width: none;
+}
+
+#layout-builder-modal .form-type--checkbox input {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+#layout-builder-modal .form-type--checkbox label {
+  padding-left: 0.625rem;
+}
+
+#layout-builder-modal .ief-entity-operations input {
+  margin-bottom: 0.5rem;
+}
+
+#layout-builder-modal
+  .field--widget-entity-browser-entity-reference
+  > .form-wrapper {
+  padding: 1rem;
+}
+
+#layout-builder-modal .field--widget-entity-reference-paragraphs {
+  margin-bottom: 1.25rem;
+}
+
+#layout-builder-modal .paragraphs-dropbutton-wrapper input {
+  margin-right: 0.25rem;
+}
+
+#layout-builder-modal
+  .field--widget-inline-entity-form-complex
+  input[data-drupal-selector='edit-settings-block-form-field-link-file-actions-ief-add'] {
+  margin-top: 1rem;
+}
+
+/* Entity embed select dialog tweaks */
+.entity-select-dialog .ui-dialog-buttonset {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.entity-select-dialog input[type='radio'] {
+  height: auto;
+}
+
+.entity-select-dialog .form-item--radio {
+  display: block;
+}
+
+.entity-select-dialog .form-item--radio .form-item {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+/* Toolbar z-index fixes for modals */
+.toolbar-oriented .toolbar-bar {
+  z-index: 99 !important;
+}
