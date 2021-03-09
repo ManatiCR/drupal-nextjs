@@ -1,0 +1,11 @@
+uuid: 4bdbe107-3a72-4419-acba-e96b9f264dba
+langcode: en
+status: true
+dependencies: {  }
+id: button_list
+block_id: 'inline_block:button_list'
+category: components
+label: 'Button list'
+weight: 1
+image_path: ''
+image_alt: ''

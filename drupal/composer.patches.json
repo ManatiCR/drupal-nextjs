@@ -10,6 +10,12 @@
     },
     "drupal/media_entity_instagram": {
       "https://www.drupal.org/node/3118095": "https://www.drupal.org/files/issues/2020-09-03/3118095-10.patch"
+    },
+    "drupal/jsonapi_extras": {
+      "https://www.drupal.org/node/2942851": "https://www.drupal.org/files/issues/2021-01-06/jsonapi_extras-url_link_enhancer-2942851-38.patch"
+    },
+    "drupal/paragraphs": {
+      "https://www.drupal.org/node/2901390": "https://www.drupal.org/files/issues/2020-06-25/paragraphs-2901390-51.patch"
     }
   }
 }

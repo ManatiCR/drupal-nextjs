@@ -1,0 +1,11 @@
+uuid: 03edd6cd-887d-41c6-8bf9-587a63024fc7
+langcode: en
+status: true
+dependencies: {  }
+id: content_card
+block_id: 'inline_block:card'
+category: components
+label: 'Content card'
+weight: 0
+image_path: ''
+image_alt: ''

@@ -1,0 +1,23 @@
+uuid: 44a24749-924b-410c-abe5-698d7e4044bb
+langcode: en
+status: true
+dependencies:
+  config:
+    - block_content.type.button_list
+    - field.storage.block_content.field_heading_level
+  module:
+    - options
+id: block_content.button_list.field_heading_level
+field_name: field_heading_level
+entity_type: block_content
+bundle: button_list
+label: 'Heading level'
+description: ''
+required: true
+translatable: true
+default_value:
+  -
+    value: h2
+default_value_callback: ''
+settings: {  }
+field_type: list_string
