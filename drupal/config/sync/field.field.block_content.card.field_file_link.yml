@@ -1,0 +1,36 @@
+uuid: d2568ca6-230b-4b95-b444-b824c928da73
+langcode: en
+status: true
+dependencies:
+  config:
+    - block_content.type.card
+    - field.storage.block_content.field_file_link
+    - paragraphs.paragraphs_type.file
+    - paragraphs.paragraphs_type.link
+  module:
+    - entity_reference_revisions
+id: block_content.card.field_file_link
+field_name: field_file_link
+entity_type: block_content
+bundle: card
+label: CTA
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 0
+    target_bundles:
+      file: file
+      link: link
+    target_bundles_drag_drop:
+      file:
+        enabled: true
+        weight: 3
+      link:
+        enabled: true
+        weight: 4
+field_type: entity_reference_revisions

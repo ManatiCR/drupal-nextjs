@@ -5,8 +5,10 @@ dependencies:
   config:
     - block_content.type.basic_block
     - field.field.block_content.basic_block.body
+    - field.field.block_content.basic_block.field_heading_level
     - field.field.block_content.basic_block.field_title
   module:
+    - options
     - text
 id: block_content.basic_block.default
 targetEntityType: block_content
@@ -19,6 +21,13 @@ content:
     weight: 1
     settings: {  }
     third_party_settings: {  }
+    region: content
+  field_heading_level:
+    weight: 2
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: list_default
     region: content
   field_title:
     weight: 0

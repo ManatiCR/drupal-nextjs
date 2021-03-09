@@ -1,0 +1,8 @@
+uuid: 39b670ce-4710-4432-a5ff-7b5a3990a1bd
+langcode: en
+status: true
+dependencies: {  }
+id: card
+label: 'Content Card'
+revision: 0
+description: 'Block used by Layout Builder to add a Content Card component.'

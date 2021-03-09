@@ -1,0 +1,8 @@
+uuid: 9e9c1e63-5c25-4ff2-9bc4-dd8c480c1d64
+langcode: en
+status: true
+dependencies: {  }
+id: button_list
+label: 'Button list'
+revision: 0
+description: 'Block used by Layout Builder to add a Button List component.'
