@@ -1,0 +1,79 @@
+schema {
+  query: Query
+}
+
+type Query {
+  node(id: Int!): NodeInterface
+  block(id: Int!): BasicBlock
+  landingPage(id: Int!): LandingPage
+  article(id: Int!): Article
+  landigPages(
+    offset: Int = 0
+    limit: Int = 10
+  ): LandingPageConnection!
+  drupalConfig(
+    configFile: String!
+    configKey: String!
+  ): [DrupalConfig]!
+}
+
+interface NodeInterface {
+  id: Int!
+  title: String!
+}
+
+type LandingPage implements NodeInterface {
+  id: Int!
+  title: String!
+  sections: [Section]
+  blocks: [BasicBlock]
+}
+
+type Article implements NodeInterface {
+  id: Int!
+  title: String!
+}
+
+type LandingPageConnection {
+  total: Int!
+  items: [LandingPage!]
+}
+
+interface BlockInterface {
+  id: Int!
+}
+
+type BasicBlock implements BlockInterface {
+  id: Int!
+}
+
+type DrupalConfig {
+  name: String
+  value: String
+}
+
+type Section {
+  layoutId: String
+  layoutSettings: SectionSettings
+  components: [Component]
+}
+
+type SectionSettings {
+  variant: String
+  background: String
+  spacing_top: String
+  spacing_bottom: String
+  side_spacing: String
+}
+
+type Component {
+  id: String!
+  type: String!
+  region: String!
+  fields: [ComponentFields]
+}
+
+type ComponentFields {
+  name: String
+  value: String
+}

@@ -9,8 +9,8 @@ features:
   favicon: true
   node_user_picture: false
 logo:
-  path: ''
+  path: 'public://TVT-Connect-2020.jpg'
   url: ''
-  use_default: true
+  use_default: false
 _core:
   default_config_hash: KHk8rzK2GMRtdfoAeocFrll8Q7gGtiocl2GF5jnX9cY

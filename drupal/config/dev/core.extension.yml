@@ -25,6 +25,7 @@ module:
   file: 0
   filter: 0
   focal_point: 0
+  graphql: 0
   image: 0
   image_style_quality: 0
   inline_form_errors: 0
@@ -34,6 +35,7 @@ module:
   layout_builder_iframe_modal: 0
   layout_discovery: 0
   link: 0
+  manati_graphql: 0
   manati_landing_pages: 0
   manati_layout_builder: 0
   media: 0
@@ -67,6 +69,7 @@ module:
   token: 0
   toolbar: 0
   twig_tweak: 0
+  typed_data: 0
   update: 0
   user: 0
   views_ui: 0
