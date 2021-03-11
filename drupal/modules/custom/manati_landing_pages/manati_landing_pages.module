@@ -9,43 +9,4 @@
  * @see https://www.drupal.org/node/2217931
  */
 
-use Drupal\Core\Entity\EntityInterface;
 
-/**
- * Implements hook_form_alter().
- */
-function manati_landing_pages_form_alter(&$form, &$form_state, $form_id) {
-  $forms = ['node_landing_page_form', 'node_landing_page_edit_form'];
-  if (in_array($form_id, $forms)) {
-    // Hide field_blocks field.
-    $form['field_blocks']['#access'] = FALSE;
-  }
-}
-
-/**
- * Implements hook_ENTITY_TYPE_insert().
- */
-function manati_landing_pages_node_update(EntityInterface $node) {
-  if ($node->bundle() === 'landing_page') {
-    $block_ids = [];
-    foreach ($node->layout_builder__layout->getSections() as $section) {
-      foreach ($section->getComponents() as $component) {
-        $block = \Drupal::entityTypeManager()->getStorage('block_content')->loadRevision($component->get('configuration')['block_revision_id']);
-        $block_ids[] = [
-          'target_id' => $block->id(),
-        ];
-      }
-    }
-    $node->field_blocks = $block_ids;
-    drupal_register_shutdown_function('_manati_landing_pages_post_update', $node);
-  }
-}
-
-/**
- * Helper function for save the node.
- */
-function _manati_landing_pages_post_update($node) {
-  if ($node) {
-    $node->save();
-  }
-}

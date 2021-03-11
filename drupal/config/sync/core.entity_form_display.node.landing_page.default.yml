@@ -3,7 +3,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.landing_page.field_blocks
     - field.field.node.landing_page.layout_builder__layout
     - node.type.landing_page
   module:
@@ -21,16 +20,6 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_blocks:
-    weight: 121
-    settings:
-      match_operator: CONTAINS
-      match_limit: 10
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
   path:
     type: path
     weight: 30
