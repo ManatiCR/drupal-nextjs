@@ -1,0 +1,32 @@
+uuid: 68d110bf-9cb4-45ea-800f-e8b23ef991f6
+langcode: en
+status: true
+dependencies:
+  config:
+    - block_content.type.card
+    - field.field.block_content.card.body
+    - field.field.block_content.card.field_image
+  module:
+    - text
+id: block_content.card.default
+targetEntityType: block_content
+bundle: card
+mode: default
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 0
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_image:
+    type: entity_reference_entity_view
+    weight: 1
+    label: above
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    region: content
+hidden: {  }

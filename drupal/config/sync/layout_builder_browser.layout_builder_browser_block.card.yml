@@ -1,0 +1,11 @@
+uuid: 7a16d682-624b-403e-b3e0-698e7f3b247a
+langcode: en
+status: true
+dependencies: {  }
+id: card
+block_id: 'inline_block:card'
+category: components
+label: Card
+weight: null
+image_path: ''
+image_alt: ''

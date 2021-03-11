@@ -1,11 +1,14 @@
-uuid: 8bbe28a8-b79a-4638-992b-7e6ccb717ea5
+uuid: 6491ba3a-d90a-45eb-a9fd-dbf5451ca97e
 langcode: en
 status: true
 dependencies: {  }
 name: graphql_server
 label: 'Graphql Server'
 schema: manati
-schema_configuration: {  }
+schema_configuration:
+  composable:
+    extensions:
+      manati_extension: manati_extension
 persisted_queries_settings: {  }
 endpoint: /graphql
 debug_flag: 0

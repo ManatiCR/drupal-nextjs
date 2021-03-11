@@ -1,0 +1,8 @@
+uuid: 8418cc87-7b50-4006-9a8d-7938b1c15969
+langcode: en
+status: true
+dependencies: {  }
+id: card
+label: Card
+revision: 1
+description: ''
