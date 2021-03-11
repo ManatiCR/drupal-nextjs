@@ -6,10 +6,10 @@ use Drupal\graphql\GraphQL\ResolverBuilder;
 use Drupal\graphql\GraphQL\ResolverRegistry;
 use Drupal\graphql\Plugin\GraphQL\Schema\SdlSchemaPluginBase;
 use Drupal\manati_graphql\Wrappers\QueryConnection;
-use Drupal\node\NodeInterface;
-use GraphQL\Error\Error;
 
 /**
+ * Undocumented function.
+ *
  * @Schema(
  *   id = "manati",
  *   name = "Manati schema"
@@ -24,11 +24,11 @@ class ManatiSchema extends SdlSchemaPluginBase {
     $builder = new ResolverBuilder();
     $registry = new ResolverRegistry();
 
-
     $this->addQueryFields($registry, $builder);
     $this->addLandingPageFields($registry, $builder);
-    $this->addArticleFields($registry, $builder);
-    $this->addResolveTypes($registry);
+    $this->addSectionFields($registry, $builder);
+    $this->addComponentFields($registry, $builder);
+    $this->addBlockComponentFields($registry, $builder);
 
     // Re-usable connection type fields.
     $this->addConnectionFields('LandingPageConnection', $registry, $builder);
@@ -37,8 +37,7 @@ class ManatiSchema extends SdlSchemaPluginBase {
   }
 
   /**
-   * @param \Drupal\graphql\GraphQL\ResolverRegistry $registry
-   * @param \Drupal\graphql\GraphQL\ResolverBuilder $builder
+   * Undocumented function.
    */
   protected function addQueryFields(ResolverRegistry $registry, ResolverBuilder $builder) {
     $registry->addFieldResolver('Query', 'landingPage',
@@ -48,18 +47,10 @@ class ManatiSchema extends SdlSchemaPluginBase {
         ->map('id', $builder->fromArgument('id'))
     );
 
-    $registry->addFieldResolver('Query', 'article',
-      $builder->produce('entity_load')
-        ->map('type', $builder->fromValue('node'))
-        ->map('bundles', $builder->fromValue(['article']))
-        ->map('id', $builder->fromArgument('id'))
-    );
-
-    $registry->addFieldResolver('Query', 'landingPage',
-      $builder->produce('entity_load')
-        ->map('type', $builder->fromValue('node'))
-        ->map('bundles', $builder->fromValue(['landing_page']))
-        ->map('id', $builder->fromArgument('id'))
+    $registry->addFieldResolver('Query', 'landingPages',
+      $builder->produce('query_landing_pages')
+        ->map('offset', $builder->fromArgument('offset'))
+        ->map('limit', $builder->fromArgument('limit'))
     );
 
     $registry->addFieldResolver('Query', 'drupalConfig',
@@ -68,17 +59,10 @@ class ManatiSchema extends SdlSchemaPluginBase {
         ->map('config_key', $builder->fromArgument('configKey'))
     );
 
-    $registry->addFieldResolver('Query', 'block',
-      $builder->produce('entity_load')
-        ->map('type', $builder->fromValue('block_content'))
-        ->map('bundles', $builder->fromValue(['basic_block']))
-        ->map('id', $builder->fromArgument('id'))
-    );
   }
 
   /**
-   * @param \Drupal\graphql\GraphQL\ResolverRegistry $registry
-   * @param \Drupal\graphql\GraphQL\ResolverBuilder $builder
+   * Undocumented function.
    */
   protected function addLandingPageFields(ResolverRegistry $registry, ResolverBuilder $builder) {
     $registry->addFieldResolver('LandingPage', 'id',
@@ -93,81 +77,125 @@ class ManatiSchema extends SdlSchemaPluginBase {
       )
     );
 
-    $registry->addFieldResolver('LandingPage', 'blocks',
-      $builder->compose(
-        $builder->produce('entity_reference')
-          ->map('entity', $builder->fromParent())
-          ->map('field', $builder->fromValue('field_blocks'))
-      )
-    );
-
     $registry->addFieldResolver('LandingPage', 'sections',
       $builder->compose(
-        $builder->produce('query_landing_page_sections')
+        $builder->produce('layout_sections')
           ->map('entity', $builder->fromParent())
       )
-    );
-
-    $registry->addFieldResolver('BasicBlock', 'id',
-      $builder->produce('entity_id')
-        ->map('entity', $builder->fromParent())
-    );
-
-    $registry->addFieldResolver('BasicBlock', 'title',
-      $builder->compose(
-        $builder->produce('entity_label')
-          ->map('entity', $builder->fromParent())
-      )
-    );
-
-    $registry->addFieldResolver('BasicBlock', 'id',
-      $builder->produce('entity_id')
-        ->map('entity', $builder->fromParent())
     );
 
   }
 
   /**
-   * @param \Drupal\graphql\GraphQL\ResolverRegistry $registry
-   * @param \Drupal\graphql\GraphQL\ResolverBuilder $builder
+   * Undocumented function.
    */
-  protected function addArticleFields(ResolverRegistry $registry, ResolverBuilder $builder) {
-    $registry->addFieldResolver('Article', 'id',
-      $builder->produce('entity_id')
-        ->map('entity', $builder->fromParent())
+  protected function addSectionFields(ResolverRegistry $registry, ResolverBuilder $builder) {
+    $registry->addFieldResolver('Section', 'section_id',
+      $builder->produce('section_id')
+        ->map('section', $builder->fromParent())
     );
 
-    $registry->addFieldResolver('Article', 'title',
+    $registry->addFieldResolver('Section', 'variant',
+      $builder->produce('section_field')
+        ->map('section', $builder->fromParent())
+        ->map('field', $builder->fromValue('variant'))
+    );
+
+    $registry->addFieldResolver('Section', 'background',
+      $builder->produce('section_field')
+        ->map('section', $builder->fromParent())
+        ->map('field', $builder->fromValue('background'))
+    );
+
+    $registry->addFieldResolver('Section', 'column_proportions',
+      $builder->produce('section_field')
+        ->map('section', $builder->fromParent())
+        ->map('field', $builder->fromValue('column_proportions'))
+    );
+
+    $registry->addFieldResolver('Section', 'spacing_top',
+      $builder->produce('section_field')
+        ->map('section', $builder->fromParent())
+        ->map('field', $builder->fromValue('spacing_top'))
+    );
+
+    $registry->addFieldResolver('Section', 'spacing_bottom',
+      $builder->produce('section_field')
+        ->map('section', $builder->fromParent())
+        ->map('field', $builder->fromValue('spacing_bottom'))
+    );
+
+    $registry->addFieldResolver('Section', 'spacing_columns',
+      $builder->produce('section_field')
+        ->map('section', $builder->fromParent())
+        ->map('field', $builder->fromValue('spacing_columns'))
+    );
+
+    $registry->addFieldResolver('Section', 'equal_height',
+      $builder->produce('section_field')
+        ->map('section', $builder->fromParent())
+        ->map('field', $builder->fromValue('equal_height'))
+    );
+
+    $registry->addFieldResolver('Section', 'side_spacing',
+      $builder->produce('section_field')
+        ->map('section', $builder->fromParent())
+        ->map('field', $builder->fromValue('side_spacing'))
+    );
+
+    $registry->addFieldResolver('Section', 'components',
+      $builder->produce('section_components')
+        ->map('section', $builder->fromParent())
+    );
+  }
+
+  /**
+   * Undocumented function.
+   */
+  protected function addComponentFields(ResolverRegistry $registry, ResolverBuilder $builder) {
+    $registry->addFieldResolver('Component', 'region',
+      $builder->produce('component_region')
+        ->map('component', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver('Component', 'type',
+      $builder->produce('component_type')
+        ->map('component', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver('Component', 'id',
+      $builder->produce('component_id')
+        ->map('component', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver('Component', 'fields',
       $builder->compose(
-        $builder->produce('entity_label')
-          ->map('entity', $builder->fromParent())
+        $builder->produce('component_id')
+          ->map('component', $builder->fromParent()),
+        $builder->produce('entity_load')
+          ->map('type', $builder->fromValue('block_content'))
+          ->map('id', $builder->fromParent())
       )
     );
   }
 
   /**
-   * @param \Drupal\graphql\GraphQL\ResolverRegistry $registry
+   * Undocumented function.
    */
-  protected function addResolveTypes(ResolverRegistry $registry) {
-    // NodeInterface type resolver.
-    $registry->addTypeResolver('NodeInterface', function ($value) {
-      if ($value instanceof NodeInterface) {
-        switch ($value->bundle()) {
-          case 'article':
-            return 'Article';
+  protected function addBlockComponentFields(ResolverRegistry $registry, ResolverBuilder $builder) {
+    $registry->addFieldResolver('ComponentFields', 'label',
+      $builder->produce('entity_label')
+        ->map('entity', $builder->fromParent())
+    );
 
-          case 'landing_page':
-            return 'LandingPage';
-        }
-      }
-      throw new Error('Could not resolve content type.');
-    });
+    $registry->addFieldResolver('ComponentFields', 'field_title',
+      $builder->produce('entity_id')
+        ->map('entity', $builder->fromParent())
+    );
   }
 
   /**
-   * @param string $type
-   * @param \Drupal\graphql\GraphQL\ResolverRegistry $registry
-   * @param \Drupal\graphql\GraphQL\ResolverBuilder $builder
+   * Undocumented function.
    */
   protected function addConnectionFields($type, ResolverRegistry $registry, ResolverBuilder $builder) {
     $registry->addFieldResolver($type, 'total',

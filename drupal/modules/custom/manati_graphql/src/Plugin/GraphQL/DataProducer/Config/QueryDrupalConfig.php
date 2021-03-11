@@ -70,11 +70,7 @@ class QueryDrupalConfig extends DataProducerPluginBase implements ContainerFacto
   }
 
   /**
-   * Resolve function.
-   *
-   * @param string $config_file
-   * @param string $config_key
-   * @return @return array
+   * Undocumented function.
    */
   public function resolve($config_file, $config_key) {
     $config = $this->configFactory->get($config_file)->get($config_key);

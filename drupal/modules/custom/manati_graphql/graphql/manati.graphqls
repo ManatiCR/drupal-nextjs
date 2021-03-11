@@ -3,11 +3,8 @@ schema {
 }
 
 type Query {
-  node(id: Int!): NodeInterface
-  block(id: Int!): BasicBlock
   landingPage(id: Int!): LandingPage
-  article(id: Int!): Article
-  landigPages(
+  landingPages(
     offset: Int = 0
     limit: Int = 10
   ): LandingPageConnection!
@@ -26,54 +23,40 @@ type LandingPage implements NodeInterface {
   id: Int!
   title: String!
   sections: [Section]
-  blocks: [BasicBlock]
 }
 
-type Article implements NodeInterface {
-  id: Int!
-  title: String!
-}
 
 type LandingPageConnection {
   total: Int!
   items: [LandingPage!]
 }
 
-interface BlockInterface {
-  id: Int!
-}
-
-type BasicBlock implements BlockInterface {
-  id: Int!
-}
-
-type DrupalConfig {
-  name: String
-  value: String
-}
-
 type Section {
-  layoutId: String
-  layoutSettings: SectionSettings
+  section_id: String!
+  variant: String
+  background: String
+  column_proportions: String
+  spacing_top: String
+  spacing_bottom: String
+  spacing_columns: String
+  equal_height: Int
+  side_spacing: Int
   components: [Component]
 }
 
-type SectionSettings {
-  variant: String
-  background: String
-  spacing_top: String
-  spacing_bottom: String
-  side_spacing: String
-}
-
 type Component {
-  id: String!
-  type: String!
   region: String!
-  fields: [ComponentFields]
+  id: Int!
+  type: String!
+  fields: ComponentFields
 }
 
 type ComponentFields {
+  label: String
+  field_title: String
+}
+
+type DrupalConfig {
   name: String
   value: String
 }

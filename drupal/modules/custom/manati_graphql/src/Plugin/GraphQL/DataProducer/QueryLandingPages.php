@@ -11,6 +11,8 @@ use GraphQL\Error\UserError;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
+ * Undocumented function.
+ *
  * @DataProducer(
  *   id = "query_landing_pages",
  *   name = @Translation("Load landing pages"),
@@ -35,6 +37,8 @@ class QueryLandingPages extends DataProducerPluginBase implements ContainerFacto
   const MAX_LIMIT = 100;
 
   /**
+   * Undocumented function.
+   *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
@@ -63,6 +67,7 @@ class QueryLandingPages extends DataProducerPluginBase implements ContainerFacto
    * @param mixed $pluginDefinition
    *   The plugin definition.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   *   Undocumented function.
    *
    * @codeCoverageIgnore
    */
@@ -77,13 +82,7 @@ class QueryLandingPages extends DataProducerPluginBase implements ContainerFacto
   }
 
   /**
-   * @param int $offset
-   * @param int $limit
-   * @param \Drupal\Core\Cache\RefinableCacheableDependencyInterface $metadata
-   *
-   * @return \Drupal\manati_graphql\Wrappers\QueryConnection
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * Undocumented function.
    */
   public function resolve($offset, $limit, RefinableCacheableDependencyInterface $metadata) {
     if ($limit > static::MAX_LIMIT) {

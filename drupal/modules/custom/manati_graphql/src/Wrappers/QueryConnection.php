@@ -5,24 +5,27 @@ namespace Drupal\manati_graphql\Wrappers;
 use Drupal\Core\Entity\Query\QueryInterface;
 use GraphQL\Deferred;
 
+/**
+ * Undocumented function.
+ */
 class QueryConnection {
 
   /**
+   * Undocumented function.
+   *
    * @var \Drupal\Core\Entity\Query\QueryInterface
    */
   protected $query;
 
   /**
    * QueryConnection constructor.
-   *
-   * @param \Drupal\Core\Entity\Query\QueryInterface $query
    */
   public function __construct(QueryInterface $query) {
     $this->query = $query;
   }
 
   /**
-   * @return int
+   * Undocumented function.
    */
   public function total() {
     $query = clone $this->query;
@@ -31,7 +34,7 @@ class QueryConnection {
   }
 
   /**
-   * @return array|\GraphQL\Deferred
+   * Undocumented function.
    */
   public function items() {
     $result = $this->query->execute();
