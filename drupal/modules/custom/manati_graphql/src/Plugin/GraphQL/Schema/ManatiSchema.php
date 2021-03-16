@@ -6,6 +6,8 @@ use Drupal\graphql\GraphQL\ResolverBuilder;
 use Drupal\graphql\GraphQL\ResolverRegistry;
 use Drupal\graphql\Plugin\GraphQL\Schema\SdlSchemaPluginBase;
 use Drupal\manati_graphql\Wrappers\QueryConnection;
+use Drupal\block_content\BlockContentInterface;
+use GraphQL\Error\Error;
 
 /**
  * Undocumented function.
@@ -28,7 +30,10 @@ class ManatiSchema extends SdlSchemaPluginBase {
     $this->addLandingPageFields($registry, $builder);
     $this->addSectionFields($registry, $builder);
     $this->addComponentFields($registry, $builder);
-    $this->addBlockComponentFields($registry, $builder);
+    $this->addLayoutBuilderBlockTypeResolver($registry);
+    $this->addLayoutBuilderBlockFields($registry, $builder);
+    $this->addBasicBlockFields($registry, $builder);
+    $this->addCardFields($registry, $builder);
 
     // Re-usable connection type fields.
     $this->addConnectionFields('LandingPageConnection', $registry, $builder);
@@ -168,7 +173,7 @@ class ManatiSchema extends SdlSchemaPluginBase {
         ->map('component', $builder->fromParent())
     );
 
-    $registry->addFieldResolver('Component', 'fields',
+    $registry->addFieldResolver('Component', 'block',
       $builder->compose(
         $builder->produce('component_id')
           ->map('component', $builder->fromParent()),
@@ -182,15 +187,76 @@ class ManatiSchema extends SdlSchemaPluginBase {
   /**
    * Undocumented function.
    */
-  protected function addBlockComponentFields(ResolverRegistry $registry, ResolverBuilder $builder) {
-    $registry->addFieldResolver('ComponentFields', 'label',
+  protected function addLayoutBuilderBlockTypeResolver(ResolverRegistry $registry) {
+    // Tell GraphQL how to resolve the LayoutBuilderBlock interface.
+    $registry->addTypeResolver('LayoutBuilderBlock', function ($entity) {
+      if ($entity instanceof BlockContentInterface) {
+        switch ($entity->bundle()) {
+          case 'basic_block':
+            return 'BasicBlock';
+
+          case 'card':
+            return 'Card';
+        }
+
+      }
+      throw new Error('Could not resolve content type.');
+    });
+  }
+
+  /**
+   * Undocumented function.
+   */
+  protected function addLayoutBuilderBlockFields(ResolverRegistry $registry, ResolverBuilder $builder) {
+    $registry->addFieldResolver('LayoutBuilderBlock', 'label',
       $builder->produce('entity_label')
         ->map('entity', $builder->fromParent())
     );
 
-    $registry->addFieldResolver('ComponentFields', 'field_title',
+    $registry->addFieldResolver('LayoutBuilderBlock', 'id',
       $builder->produce('entity_id')
         ->map('entity', $builder->fromParent())
+    );
+  }
+
+  /**
+   * Undocumented function.
+   */
+  protected function addBasicBlockFields(ResolverRegistry $registry, ResolverBuilder $builder) {
+    $registry->addFieldResolver('BasicBlock', 'label',
+      $builder->produce('entity_label')
+        ->map('entity', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver('BasicBlock', 'id',
+      $builder->produce('entity_id')
+        ->map('entity', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver('BasicBlock', 'field_title',
+      $builder->produce('entity_id')
+        ->map('entity', $builder->fromParent())
+    );
+  }
+
+  /**
+   * Undocumented function.
+   */
+  protected function addCardFields(ResolverRegistry $registry, ResolverBuilder $builder) {
+    $registry->addFieldResolver('Card', 'label',
+      $builder->produce('entity_label')
+        ->map('entity', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver('Card', 'id',
+      $builder->produce('entity_id')
+        ->map('entity', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver('Card', 'field_image',
+      $builder->callback(function () {
+        return 'hola';
+      })
     );
   }
 

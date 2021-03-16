@@ -48,13 +48,26 @@ type Component {
   region: String!
   id: Int!
   type: String!
-  fields: ComponentFields
+  block: LayoutBuilderBlock
 }
 
-type ComponentFields {
-  label: String
+interface LayoutBuilderBlock {
+  id: String!
+  label: String!
+}
+
+type BasicBlock implements LayoutBuilderBlock {
+  id: String!
+  label: String!
   field_title: String
 }
+
+type Card implements LayoutBuilderBlock {
+  id: String!
+  label: String!
+  field_image: String
+}
+
 
 type DrupalConfig {
   name: String
