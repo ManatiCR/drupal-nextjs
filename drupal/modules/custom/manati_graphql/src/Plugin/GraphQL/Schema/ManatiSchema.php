@@ -31,7 +31,6 @@ class ManatiSchema extends SdlSchemaPluginBase {
     $this->addSectionFields($registry, $builder);
     $this->addComponentFields($registry, $builder);
     $this->addLayoutBuilderBlockTypeResolver($registry);
-    $this->addLayoutBuilderBlockFields($registry, $builder);
     $this->addBasicBlockFields($registry, $builder);
     $this->addCardFields($registry, $builder);
 
@@ -179,6 +178,8 @@ class ManatiSchema extends SdlSchemaPluginBase {
           ->map('component', $builder->fromParent()),
         $builder->produce('entity_load')
           ->map('type', $builder->fromValue('block_content'))
+          ->map('bundle', $builder->produce('component_type')
+            ->map('component', $builder->fromParent()))
           ->map('id', $builder->fromParent())
       )
     );
@@ -207,35 +208,27 @@ class ManatiSchema extends SdlSchemaPluginBase {
   /**
    * Undocumented function.
    */
-  protected function addLayoutBuilderBlockFields(ResolverRegistry $registry, ResolverBuilder $builder) {
-    $registry->addFieldResolver('LayoutBuilderBlock', 'label',
-      $builder->produce('entity_label')
-        ->map('entity', $builder->fromParent())
-    );
-
-    $registry->addFieldResolver('LayoutBuilderBlock', 'id',
-      $builder->produce('entity_id')
-        ->map('entity', $builder->fromParent())
-    );
-  }
-
-  /**
-   * Undocumented function.
-   */
   protected function addBasicBlockFields(ResolverRegistry $registry, ResolverBuilder $builder) {
-    $registry->addFieldResolver('BasicBlock', 'label',
-      $builder->produce('entity_label')
-        ->map('entity', $builder->fromParent())
-    );
-
     $registry->addFieldResolver('BasicBlock', 'id',
       $builder->produce('entity_id')
         ->map('entity', $builder->fromParent())
     );
 
-    $registry->addFieldResolver('BasicBlock', 'field_title',
-      $builder->produce('entity_rendered')
+    $registry->addFieldResolver('BasicBlock', 'label',
+      $builder->produce('entity_label')
         ->map('entity', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver('BasicBlock', 'field_title',
+      $builder->produce('block_plain_text')
+        ->map('entity', $builder->fromParent())
+        ->map('field', $builder->fromValue('field_title'))
+    );
+
+    $registry->addFieldResolver('BasicBlock', 'body',
+      $builder->produce('block_formatted_text')
+        ->map('entity', $builder->fromParent())
+        ->map('field', $builder->fromValue('body'))
     );
   }
 

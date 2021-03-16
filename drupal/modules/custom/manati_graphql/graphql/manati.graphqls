@@ -60,6 +60,7 @@ type BasicBlock implements LayoutBuilderBlock {
   id: String!
   label: String!
   field_title: String
+  body: String
 }
 
 type Card implements LayoutBuilderBlock {

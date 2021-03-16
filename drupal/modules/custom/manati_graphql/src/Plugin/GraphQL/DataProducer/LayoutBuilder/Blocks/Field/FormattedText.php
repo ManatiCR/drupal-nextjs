@@ -9,11 +9,11 @@ use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
  * Undocumented function.
  *
  * @DataProducer(
- *   id = "block_plain_text",
- *   name = @Translation("Block plain text field"),
- *   description = @Translation("Returns the block plain text field."),
+ *   id = "block_formatted_text",
+ *   name = @Translation("Block forrmated text field"),
+ *   description = @Translation("Returns the block forrmated text field."),
  *   produces = @ContextDefinition("string",
- *     label = @Translation("Plain text")
+ *     label = @Translation("forrmated text")
  *   ),
  *   consumes = {
  *     "entity" = @ContextDefinition("entity",
@@ -25,14 +25,14 @@ use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
  *   }
  * )
  */
-class PlainText extends DataProducerPluginBase {
+class FormattedText extends DataProducerPluginBase {
 
   /**
    * Undocumented function.
    */
   public function resolve(EntityInterface $entity, string $field) {
     if (isset($entity->$field)) {
-      return $entity->$field->value;
+      return $entity->$field->processed;
     }
     return NULL;
   }
