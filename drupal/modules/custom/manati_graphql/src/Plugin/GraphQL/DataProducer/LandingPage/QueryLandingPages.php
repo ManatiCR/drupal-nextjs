@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\manati_graphql\Plugin\GraphQL\DataProducer;
+namespace Drupal\manati_graphql\Plugin\GraphQL\DataProducer\LandingPage;
 
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;

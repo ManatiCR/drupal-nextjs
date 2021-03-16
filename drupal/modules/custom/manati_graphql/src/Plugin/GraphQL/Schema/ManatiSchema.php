@@ -234,7 +234,7 @@ class ManatiSchema extends SdlSchemaPluginBase {
     );
 
     $registry->addFieldResolver('BasicBlock', 'field_title',
-      $builder->produce('entity_id')
+      $builder->produce('entity_rendered')
         ->map('entity', $builder->fromParent())
     );
   }

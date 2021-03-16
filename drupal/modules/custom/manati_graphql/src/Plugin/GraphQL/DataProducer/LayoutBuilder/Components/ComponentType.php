@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\manati_graphql\Plugin\GraphQL\DataProducer\Components;
+namespace Drupal\manati_graphql\Plugin\GraphQL\DataProducer\LayoutBuilder\Components;
 
 use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
 use Drupal\layout_builder\SectionComponent;
@@ -9,11 +9,11 @@ use Drupal\layout_builder\SectionComponent;
  * Undocumented function.
  *
  * @DataProducer(
- *   id = "component_region",
- *   name = @Translation("Component Region"),
- *   description = @Translation("Returns the region of the component."),
+ *   id = "component_type",
+ *   name = @Translation("Component Type"),
+ *   description = @Translation("Returns the type of the component."),
  *   produces = @ContextDefinition("string",
- *     label = @Translation("Component Region"),
+ *     label = @Translation("Component Type"),
  *   ),
  *   consumes = {
  *     "component" = @ContextDefinition("any",
@@ -22,13 +22,13 @@ use Drupal\layout_builder\SectionComponent;
  *   }
  * )
  */
-class ComponentRegion extends DataProducerPluginBase {
+class ComponentType extends DataProducerPluginBase {
 
   /**
    * Undocumented function.
    */
   public function resolve(SectionComponent $component) {
-    return $component->getRegion();
+    return $component->getPlugin()->getConfiguration()['type'];
   }
 
 }

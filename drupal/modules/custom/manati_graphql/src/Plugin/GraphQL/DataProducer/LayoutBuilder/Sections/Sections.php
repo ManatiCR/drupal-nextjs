@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\manati_graphql\Plugin\GraphQL\DataProducer\Sections;
+namespace Drupal\manati_graphql\Plugin\GraphQL\DataProducer\LayoutBuilder\Sections;
 
 use Drupal\node\NodeInterface;
 use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
