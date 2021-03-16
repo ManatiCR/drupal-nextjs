@@ -21,7 +21,7 @@ use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
  *   }
  * )
  */
-class EntityDescription extends DataProducerPluginBase {
+class PlainText extends DataProducerPluginBase {
 
   /**
    * @param \Drupal\Core\Entity\EntityInterface $entity
