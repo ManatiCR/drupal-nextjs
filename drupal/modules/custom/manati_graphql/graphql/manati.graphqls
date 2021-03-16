@@ -46,27 +46,28 @@ type Section {
 
 type Component {
   region: String!
-  id: Int!
+  uuid: String!
   type: String!
   block: LayoutBuilderBlock
 }
 
 interface LayoutBuilderBlock {
-  id: String!
+  uuid: String!
   label: String!
 }
 
 type BasicBlock implements LayoutBuilderBlock {
-  id: String!
+  uuid: String!
   label: String!
   field_title: String
   body: String
 }
 
 type Card implements LayoutBuilderBlock {
-  id: String!
+  uuid: String!
   label: String!
   field_image: String
+  body: String
 }
 
 

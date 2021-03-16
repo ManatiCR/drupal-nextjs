@@ -167,21 +167,19 @@ class ManatiSchema extends SdlSchemaPluginBase {
         ->map('component', $builder->fromParent())
     );
 
-    $registry->addFieldResolver('Component', 'id',
-      $builder->produce('component_id')
+    $registry->addFieldResolver('Component', 'uuid',
+      $builder->produce('component_uuid')
         ->map('component', $builder->fromParent())
     );
 
     $registry->addFieldResolver('Component', 'block',
-      $builder->compose(
-        $builder->produce('component_id')
-          ->map('component', $builder->fromParent()),
-        $builder->produce('entity_load')
-          ->map('type', $builder->fromValue('block_content'))
-          ->map('bundle', $builder->produce('component_type')
-            ->map('component', $builder->fromParent()))
-          ->map('id', $builder->fromParent())
-      )
+    $builder->produce('entity_load_by_uuid')
+      ->map('type', $builder->fromValue('block_content'))
+      ->map('bundle', $builder->produce('component_type')
+        ->map('component', $builder->fromParent()))
+      ->map('uuid', $builder->produce('component_uuid')
+        ->map('component', $builder->fromParent()))
+
     );
   }
 
@@ -250,6 +248,12 @@ class ManatiSchema extends SdlSchemaPluginBase {
       $builder->callback(function () {
         return 'hola';
       })
+    );
+
+    $registry->addFieldResolver('Card', 'body',
+      $builder->produce('block_formatted_text')
+        ->map('entity', $builder->fromParent())
+        ->map('field', $builder->fromValue('body'))
     );
   }
 

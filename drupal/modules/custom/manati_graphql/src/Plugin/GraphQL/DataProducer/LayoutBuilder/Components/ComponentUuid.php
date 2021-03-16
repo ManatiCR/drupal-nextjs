@@ -9,11 +9,11 @@ use Drupal\layout_builder\SectionComponent;
  * Undocumented function.
  *
  * @DataProducer(
- *   id = "component_id",
- *   name = @Translation("Component ID"),
- *   description = @Translation("Returns the ID of the component."),
+ *   id = "component_uuid",
+ *   name = @Translation("Component Uuid"),
+ *   description = @Translation("Returns the Uuid of the component."),
  *   produces = @ContextDefinition("string",
- *     label = @Translation("Component ID"),
+ *     label = @Translation("Component Uuid"),
  *   ),
  *   consumes = {
  *     "component" = @ContextDefinition("any",
@@ -22,13 +22,13 @@ use Drupal\layout_builder\SectionComponent;
  *   }
  * )
  */
-class ComponentId extends DataProducerPluginBase {
+class ComponentUuid extends DataProducerPluginBase {
 
   /**
    * Undocumented function.
    */
   public function resolve(SectionComponent $component) {
-    return $component->getPlugin()->getConfiguration()['block_revision_id'];
+    return $component->getPlugin()->getConfiguration()['uuid'];
   }
 
 }
