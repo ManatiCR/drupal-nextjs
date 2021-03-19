@@ -1,0 +1,39 @@
+uuid: be858eca-3223-4ad8-badb-61de977cc302
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_file_link
+    - paragraphs.paragraphs_type.cta
+    - paragraphs.paragraphs_type.file
+    - paragraphs.paragraphs_type.link
+  module:
+    - entity_reference_revisions
+id: paragraph.cta.field_file_link
+field_name: field_file_link
+entity_type: paragraph
+bundle: cta
+label: 'File or link'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 0
+    target_bundles:
+      file: file
+      link: link
+    target_bundles_drag_drop:
+      cta:
+        weight: 4
+        enabled: false
+      file:
+        enabled: true
+        weight: 5
+      link:
+        enabled: true
+        weight: 6
+field_type: entity_reference_revisions

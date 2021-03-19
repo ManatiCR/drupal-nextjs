@@ -8,6 +8,7 @@ use Drupal\graphql\GraphQL\ResolverRegistry;
 use Drupal\graphql\Plugin\GraphQL\Schema\SdlSchemaPluginBase;
 use Drupal\manati_graphql\Wrappers\QueryConnection;
 use Drupal\block_content\BlockContentInterface;
+use Drupal\media\MediaInterface;
 use GraphQL\Error\Error;
 
 /**
@@ -33,6 +34,7 @@ class ManatiSchema extends SdlSchemaPluginBase {
     $this->addSectionFields($registry, $builder);
     $this->addComponentFields($registry, $builder);
     $this->addLayoutBuilderBlockTypeResolver($registry);
+    $this->addMediaBlockTypeResolver($registry);
     $this->addBasicBlockFields($registry, $builder);
     $this->addCardFields($registry, $builder);
     $this->addMediaImageFields($registry, $builder);
@@ -237,6 +239,26 @@ class ManatiSchema extends SdlSchemaPluginBase {
 
           case 'card':
             return 'Card';
+        }
+
+      }
+      throw new Error('Could not resolve content type.');
+    });
+  }
+
+  /**
+   * Undocumented function.
+   */
+  protected function addMediaBlockTypeResolver(ResolverRegistry $registry) {
+    // Tell GraphQL how to resolve the MediaBlock interface.
+    $registry->addTypeResolver('MediaBlock', function ($entity) {
+      if ($entity instanceof MediaInterface) {
+        switch ($entity->bundle()) {
+          case 'image':
+            return 'MediaBlockImage';
+
+          case 'file':
+            return 'MediaBlockFile';
         }
 
       }

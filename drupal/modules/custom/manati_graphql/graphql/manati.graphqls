@@ -62,8 +62,8 @@ interface LayoutBuilderBlock {
 type BasicBlock implements LayoutBuilderBlock {
   uuid: String!
   label: String!
-  field_title: String
   body: String
+  field_title: String
 }
 
 type Card implements LayoutBuilderBlock {
@@ -72,7 +72,6 @@ type Card implements LayoutBuilderBlock {
   field_image: MediaImage
   body: String
 }
-
 
 type DrupalConfig {
   name: String

@@ -1,0 +1,29 @@
+uuid: 5ce73bd9-cfaf-4bdd-9b6d-dcfe549b2dde
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.cta.field_file_link
+    - paragraphs.paragraphs_type.cta
+  module:
+    - paragraphs
+id: paragraph.cta.default
+targetEntityType: paragraph
+bundle: cta
+mode: default
+content:
+  field_file_link:
+    type: entity_reference_paragraphs
+    weight: 0
+    settings:
+      title: Paragraph
+      title_plural: Paragraphs
+      edit_mode: open
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+    region: content
+hidden:
+  created: true
+  status: true
