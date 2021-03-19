@@ -7,6 +7,7 @@ use Drupal\graphql\GraphQL\ResolverRegistry;
 use Drupal\graphql\Plugin\GraphQL\Schema\SdlSchemaPluginBase;
 use Drupal\manati_graphql\Wrappers\QueryConnection;
 use Drupal\block_content\BlockContentInterface;
+use Drupal\media\MediaInterface;
 use GraphQL\Error\Error;
 
 /**
@@ -31,8 +32,13 @@ class ManatiSchema extends SdlSchemaPluginBase {
     $this->addSectionFields($registry, $builder);
     $this->addComponentFields($registry, $builder);
     $this->addLayoutBuilderBlockTypeResolver($registry);
+    $this->addMediaBlockTypeResolver($registry);
     $this->addBasicBlockFields($registry, $builder);
     $this->addCardFields($registry, $builder);
+    $this->addMediaBlockImageFields($registry, $builder);
+    $this->addFileFields($registry, $builder);
+    // $this->addParagraphFields($registry, $builder);
+    // $this->addMediaFileFields($registry, $builder);
 
     // Re-usable connection type fields.
     $this->addConnectionFields('LandingPageConnection', $registry, $builder);
@@ -206,6 +212,26 @@ class ManatiSchema extends SdlSchemaPluginBase {
   /**
    * Undocumented function.
    */
+  protected function addMediaBlockTypeResolver(ResolverRegistry $registry) {
+    // Tell GraphQL how to resolve the MediaBlock interface.
+    $registry->addTypeResolver('MediaBlock', function ($entity) {
+      if ($entity instanceof MediaInterface) {
+        switch ($entity->bundle()) {
+          case 'image':
+            return 'MediaBlockImage';
+
+          case 'file':
+            return 'MediaBlockFile';
+        }
+
+      }
+      throw new Error('Could not resolve content type.');
+    });
+  }
+
+  /**
+   * Undocumented function.
+   */
   protected function addBasicBlockFields(ResolverRegistry $registry, ResolverBuilder $builder) {
     $registry->addFieldResolver('BasicBlock', 'id',
       $builder->produce('entity_id')
@@ -244,17 +270,47 @@ class ManatiSchema extends SdlSchemaPluginBase {
         ->map('entity', $builder->fromParent())
     );
 
-    $registry->addFieldResolver('Card', 'field_image',
-      $builder->callback(function () {
-        return 'hola';
-      })
-    );
-
     $registry->addFieldResolver('Card', 'body',
       $builder->produce('block_formatted_text')
         ->map('entity', $builder->fromParent())
         ->map('field', $builder->fromValue('body'))
     );
+
+    $registry->addFieldResolver('Card', 'field_image',
+      $builder->produce('block_entity_reference')
+        ->map('entity', $builder->fromParent())
+        ->map('field', $builder->fromValue('field_image'))
+    );
+  }
+
+  /**
+   * Undocumented function.
+   */
+  protected function addMediaBlockImageFields(ResolverRegistry $registry, ResolverBuilder $builder) {
+
+    $registry->addFieldResolver('MediaBlockImage', 'id',
+      $builder->produce('entity_id')
+        ->map('entity', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver('MediaBlockImage', 'file',
+      $builder->produce('entity_reference')
+        ->map('entity', $builder->fromParent())
+        ->map('field', $builder->fromValue('field_media_image'))
+    );
+
+  }
+
+  /**
+   * Undocumented function.
+   */
+  protected function addFileFields(ResolverRegistry $registry, ResolverBuilder $builder) {
+
+    $registry->addFieldResolver('File', 'url',
+      $builder->produce('image_url')
+        ->map('entity', $builder->fromParent())
+    );
+
   }
 
   /**

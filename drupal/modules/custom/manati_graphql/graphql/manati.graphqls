@@ -59,17 +59,36 @@ interface LayoutBuilderBlock {
 type BasicBlock implements LayoutBuilderBlock {
   uuid: String!
   label: String!
-  field_title: String
   body: String
+  field_title: String
 }
 
 type Card implements LayoutBuilderBlock {
   uuid: String!
   label: String!
-  field_image: String
   body: String
+  field_image: [MediaBlock]
 }
 
+interface MediaBlock {
+  id: Int!
+}
+
+type MediaBlockImage implements MediaBlock {
+  id: Int!
+  alt: String
+  file: [File]
+}
+
+type MediaBlockFile implements MediaBlock {
+  id: Int!
+  file: [File]
+}
+
+type File {
+  url: String
+  name: String
+}
 
 type DrupalConfig {
   name: String
