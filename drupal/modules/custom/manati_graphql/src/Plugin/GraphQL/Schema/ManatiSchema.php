@@ -31,13 +31,16 @@ class ManatiSchema extends SdlSchemaPluginBase {
     $this->addQueryFields($registry, $builder);
     $this->addNodeInterfaceTypeResolver($registry, $builder);
     $this->addLandingPageFields($registry, $builder);
+    $this->addArticleFields($registry, $builder);
     $this->addSectionFields($registry, $builder);
     $this->addComponentFields($registry, $builder);
     $this->addLayoutBuilderBlockTypeResolver($registry);
-    $this->addMediaBlockTypeResolver($registry);
     $this->addBasicBlockFields($registry, $builder);
     $this->addCardFields($registry, $builder);
+    $this->addMediaInterfaceTypeResolver($registry, $builder);
     $this->addMediaImageFields($registry, $builder);
+    $this->addMediaFileFields($registry, $builder);
+    $this->addMediaRemoteVideoFields($registry, $builder);
 
     // Re-usable connection type fields.
     $this->addConnectionFields('LandingPageConnection', $registry, $builder);
@@ -76,11 +79,25 @@ class ManatiSchema extends SdlSchemaPluginBase {
     ));
 
     $registry->addFieldResolver('Query', 'mediaImage',
-    $builder->produce('entity_load')
-      ->map('type', $builder->fromValue('media'))
-      ->map('bundles', $builder->fromValue(['image']))
-      ->map('id', $builder->fromArgument('id'))
-  );
+      $builder->produce('entity_load')
+        ->map('type', $builder->fromValue('media'))
+        ->map('bundles', $builder->fromValue(['image']))
+        ->map('id', $builder->fromArgument('id'))
+    );
+
+    $registry->addFieldResolver('Query', 'mediaFile',
+      $builder->produce('entity_load')
+        ->map('type', $builder->fromValue('media'))
+        ->map('bundles', $builder->fromValue(['file']))
+        ->map('id', $builder->fromArgument('id'))
+    );
+
+    $registry->addFieldResolver('Query', 'mediaRemoteVideo',
+      $builder->produce('entity_load')
+        ->map('type', $builder->fromValue('media'))
+        ->map('bundles', $builder->fromValue(['remote_video']))
+        ->map('id', $builder->fromArgument('id'))
+    );
   }
 
   /**
@@ -92,6 +109,7 @@ class ManatiSchema extends SdlSchemaPluginBase {
       if ($value instanceof NodeInterface) {
         switch ($value->bundle()) {
           case 'landing_page': return 'LandingPage';
+          case 'article': return 'Article';
         }
       }
       throw new Error('Could not resolve content type.');
@@ -122,6 +140,40 @@ class ManatiSchema extends SdlSchemaPluginBase {
     );
 
     $registry->addFieldResolver('LandingPage', 'url',
+      $builder->compose(
+        $builder->produce('entity_url')
+          ->map('entity', $builder->fromParent()),
+        $builder->callback(function ($url) {
+          return $url->toString();
+        })
+      )
+    );
+
+  }
+
+  /**
+   * Undocumented function.
+   */
+  protected function addArticleFields(ResolverRegistry $registry, ResolverBuilder $builder) {
+    $registry->addFieldResolver('Article', 'id',
+      $builder->produce('entity_id')
+        ->map('entity', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver('Article', 'title',
+      $builder->compose(
+        $builder->produce('entity_label')
+          ->map('entity', $builder->fromParent())
+      )
+    );
+
+    $registry->addFieldResolver('Article', 'media',
+      $builder->produce('entity_reference')
+        ->map('entity', $builder->fromParent())
+        ->map('field', $builder->fromValue('field_media_unlimited'))
+    );
+
+    $registry->addFieldResolver('Article', 'url',
       $builder->compose(
         $builder->produce('entity_url')
           ->map('entity', $builder->fromParent()),
@@ -249,26 +301,6 @@ class ManatiSchema extends SdlSchemaPluginBase {
   /**
    * Undocumented function.
    */
-  protected function addMediaBlockTypeResolver(ResolverRegistry $registry) {
-    // Tell GraphQL how to resolve the MediaBlock interface.
-    $registry->addTypeResolver('MediaBlock', function ($entity) {
-      if ($entity instanceof MediaInterface) {
-        switch ($entity->bundle()) {
-          case 'image':
-            return 'MediaBlockImage';
-
-          case 'file':
-            return 'MediaBlockFile';
-        }
-
-      }
-      throw new Error('Could not resolve content type.');
-    });
-  }
-
-  /**
-   * Undocumented function.
-   */
   protected function addBasicBlockFields(ResolverRegistry $registry, ResolverBuilder $builder) {
     $registry->addFieldResolver('BasicBlock', 'id',
       $builder->produce('entity_id')
@@ -308,9 +340,6 @@ class ManatiSchema extends SdlSchemaPluginBase {
     );
 
     $registry->addFieldResolver('Card', 'field_image',
-      // $builder->callback(function () {
-      //   return 'hola';
-      // })
       $builder->fromPath('entity:node', 'field_image.0.entity')
     );
 
@@ -336,6 +365,27 @@ class ManatiSchema extends SdlSchemaPluginBase {
         return $connection->items();
       })
     );
+  }
+
+  /**
+   * Undocumented function.
+   */
+  protected function addMediaInterfaceTypeResolver(ResolverRegistry $registry, ResolverBuilder $builder) {
+    // Tell GraphQL how to resolve the MediaInterface interface.
+    $registry->addTypeResolver('MediaInterface', function ($entity) {
+      if ($entity instanceof MediaInterface) {
+        switch ($entity->bundle()) {
+          case 'image':
+            return 'MediaImage';
+          case 'file':
+            return 'MediaFile';
+          case 'remote_video':
+            return 'MediaRemoteVideo';
+        }
+
+      }
+      throw new Error('Could not resolve media type.');
+    });
   }
 
   /**
@@ -371,5 +421,52 @@ class ManatiSchema extends SdlSchemaPluginBase {
           ->map('entity', $builder->fromParent())
       )
     );
+  }
+
+  /**
+   * Undocumented function.
+   */
+  protected function addMediaFileFields(ResolverRegistry $registry, ResolverBuilder $builder) {
+    $registry->addFieldResolver('MediaFile', 'id',
+      $builder->produce('entity_id')
+        ->map('entity', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver('MediaFile', 'label',
+      $builder->produce('entity_label')
+        ->map('entity', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver('MediaFile', 'fileURL',
+      $builder->compose(
+        $builder->fromPath('entity:media', 'field_media_file.0.entity'),
+        $builder->produce('image_url')
+          ->map('entity', $builder->fromParent())
+      )
+    );
+
+    $registry->addFieldResolver('MediaFile', 'description',
+      $builder->fromPath('entity:media', 'field_media_file.0.description')
+    );
+  }
+
+  /**
+   * Undocumented function.
+   */
+  protected function addMediaRemoteVideoFields(ResolverRegistry $registry, ResolverBuilder $builder) {
+    $registry->addFieldResolver('MediaRemoteVideo', 'id',
+      $builder->produce('entity_id')
+        ->map('entity', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver('MediaRemoteVideo', 'label',
+      $builder->produce('entity_label')
+        ->map('entity', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver('MediaRemoteVideo', 'videoURL',
+      $builder->fromPath('entity:media', 'field_media_oembed_video.0.value')
+    );
+
   }
 }

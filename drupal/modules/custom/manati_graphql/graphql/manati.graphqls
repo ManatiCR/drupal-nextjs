@@ -14,6 +14,8 @@ type Query {
   ): [DrupalConfig]!
   route(path: String!): NodeInterface
   mediaImage(id: Int!): MediaImage
+  mediaFile(id: Int!): MediaFile
+  mediaRemoteVideo(id: Int!): MediaRemoteVideo
 }
 
 interface NodeInterface {
@@ -25,6 +27,13 @@ type LandingPage implements NodeInterface {
   id: Int!
   title: String!
   sections: [Section]
+  url: String
+}
+
+type Article implements NodeInterface {
+  id: Int!
+  title: String!
+  media: [MediaInterface]
   url: String
 }
 
@@ -90,4 +99,17 @@ type MediaImage implements MediaInterface {
   width: String
   height: String
   imageURL: String
+}
+
+type MediaFile implements MediaInterface {
+  id: ID!
+  label: String
+  fileURL: String
+  description: String
+}
+
+type MediaRemoteVideo implements MediaInterface {
+  id: ID!
+  label: String
+  videoURL: String
 }
