@@ -2,6 +2,7 @@
 
 namespace Drupal\manati_graphql\Plugin\GraphQL\Schema;
 
+use Drupal\node\NodeInterface;
 use Drupal\graphql\GraphQL\ResolverBuilder;
 use Drupal\graphql\GraphQL\ResolverRegistry;
 use Drupal\graphql\Plugin\GraphQL\Schema\SdlSchemaPluginBase;
@@ -27,12 +28,14 @@ class ManatiSchema extends SdlSchemaPluginBase {
     $registry = new ResolverRegistry();
 
     $this->addQueryFields($registry, $builder);
+    $this->addNodeInterfaceTypeResolver($registry, $builder);
     $this->addLandingPageFields($registry, $builder);
     $this->addSectionFields($registry, $builder);
     $this->addComponentFields($registry, $builder);
     $this->addLayoutBuilderBlockTypeResolver($registry);
     $this->addBasicBlockFields($registry, $builder);
     $this->addCardFields($registry, $builder);
+    $this->addMediaImageFields($registry, $builder);
 
     // Re-usable connection type fields.
     $this->addConnectionFields('LandingPageConnection', $registry, $builder);
@@ -63,6 +66,34 @@ class ManatiSchema extends SdlSchemaPluginBase {
         ->map('config_key', $builder->fromArgument('configKey'))
     );
 
+    $registry->addFieldResolver('Query', 'route', $builder->compose(
+      $builder->produce('route_load')
+        ->map('path', $builder->fromArgument('path')),
+      $builder->produce('route_entity')
+        ->map('url', $builder->fromParent())
+    ));
+
+    $registry->addFieldResolver('Query', 'mediaImage',
+    $builder->produce('entity_load')
+      ->map('type', $builder->fromValue('media'))
+      ->map('bundles', $builder->fromValue(['image']))
+      ->map('id', $builder->fromArgument('id'))
+  );
+  }
+
+  /**
+   * Undocumented function.
+   */
+  protected function addNodeInterfaceTypeResolver(ResolverRegistry $registry, ResolverBuilder $builder) {
+    // Tell GraphQL how to resolve types of a common interface.
+    $registry->addTypeResolver('NodeInterface', function ($value) {
+      if ($value instanceof NodeInterface) {
+        switch ($value->bundle()) {
+          case 'landing_page': return 'LandingPage';
+        }
+      }
+      throw new Error('Could not resolve content type.');
+    });
   }
 
   /**
@@ -85,6 +116,16 @@ class ManatiSchema extends SdlSchemaPluginBase {
       $builder->compose(
         $builder->produce('layout_sections')
           ->map('entity', $builder->fromParent())
+      )
+    );
+
+    $registry->addFieldResolver('LandingPage', 'url',
+      $builder->compose(
+        $builder->produce('entity_url')
+          ->map('entity', $builder->fromParent()),
+        $builder->callback(function ($url) {
+          return $url->toString();
+        })
       )
     );
 
@@ -245,9 +286,10 @@ class ManatiSchema extends SdlSchemaPluginBase {
     );
 
     $registry->addFieldResolver('Card', 'field_image',
-      $builder->callback(function () {
-        return 'hola';
-      })
+      // $builder->callback(function () {
+      //   return 'hola';
+      // })
+      $builder->fromPath('entity:node', 'field_image.0.entity')
     );
 
     $registry->addFieldResolver('Card', 'body',
@@ -274,4 +316,38 @@ class ManatiSchema extends SdlSchemaPluginBase {
     );
   }
 
+  /**
+   * Undocumented function.
+   */
+  protected function addMediaImageFields(ResolverRegistry $registry, ResolverBuilder $builder) {
+    $registry->addFieldResolver('MediaImage', 'id',
+      $builder->produce('entity_id')
+        ->map('entity', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver('MediaImage', 'label',
+      $builder->produce('entity_label')
+        ->map('entity', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver('MediaImage', 'alt',
+      $builder->fromPath('entity:media', 'field_media_image.0.alt')
+    );
+
+    $registry->addFieldResolver('MediaImage', 'width',
+      $builder->fromPath('entity:media', 'field_media_image.0.width')
+    );
+
+    $registry->addFieldResolver('MediaImage', 'height',
+      $builder->fromPath('entity:media', 'field_media_image.0.height')
+    );
+
+    $registry->addFieldResolver('MediaImage', 'imageURL',
+      $builder->compose(
+        $builder->fromPath('entity:media', 'field_media_image.0.entity'),
+        $builder->produce('image_url')
+          ->map('entity', $builder->fromParent())
+      )
+    );
+  }
 }

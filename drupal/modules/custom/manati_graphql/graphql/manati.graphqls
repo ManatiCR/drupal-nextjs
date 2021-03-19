@@ -12,6 +12,8 @@ type Query {
     configFile: String!
     configKey: String!
   ): [DrupalConfig]!
+  route(path: String!): NodeInterface
+  mediaImage(id: Int!): MediaImage
 }
 
 interface NodeInterface {
@@ -23,6 +25,7 @@ type LandingPage implements NodeInterface {
   id: Int!
   title: String!
   sections: [Section]
+  url: String
 }
 
 
@@ -66,7 +69,7 @@ type BasicBlock implements LayoutBuilderBlock {
 type Card implements LayoutBuilderBlock {
   uuid: String!
   label: String!
-  field_image: String
+  field_image: MediaImage
   body: String
 }
 
@@ -74,4 +77,18 @@ type Card implements LayoutBuilderBlock {
 type DrupalConfig {
   name: String
   value: String
+}
+
+interface MediaInterface {
+  id: ID!
+  label: String
+}
+
+type MediaImage implements MediaInterface {
+  id: ID!
+  label: String
+  alt: String
+  width: String
+  height: String
+  imageURL: String
 }
