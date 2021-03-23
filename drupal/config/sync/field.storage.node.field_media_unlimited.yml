@@ -1,16 +1,16 @@
-uuid: ba30c73c-928f-4dbc-a0fb-12a41c2a2a00
+uuid: 8c50a3f3-b7c6-467b-a3ce-b202e9437649
 langcode: en
 status: true
 dependencies:
   module:
-    - block_content
+    - media
     - node
-id: node.field_blocks
-field_name: field_blocks
+id: node.field_media_unlimited
+field_name: field_media_unlimited
 entity_type: node
 type: entity_reference
 settings:
-  target_type: block_content
+  target_type: media
 module: core
 locked: false
 cardinality: -1

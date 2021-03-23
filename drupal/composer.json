@@ -39,6 +39,7 @@
     "drupal/environment_indicator": "^4.0",
     "drupal/focal_point": "^1.5",
     "drupal/google_analytics": "^3.1",
+    "drupal/graphql": "^4.0",
     "drupal/honeypot": "^2.0",
     "drupal/image_style_quality": "^1.4",
     "drupal/layout_builder_browser": "^1.1",

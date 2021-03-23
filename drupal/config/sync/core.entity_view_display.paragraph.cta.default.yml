@@ -1,0 +1,24 @@
+uuid: c2161d99-f3bc-4502-a33f-2ff8732d23c7
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.cta.field_file_link
+    - paragraphs.paragraphs_type.cta
+  module:
+    - entity_reference_revisions
+id: paragraph.cta.default
+targetEntityType: paragraph
+bundle: cta
+mode: default
+content:
+  field_file_link:
+    type: entity_reference_revisions_entity_view
+    weight: 0
+    label: above
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    region: content
+hidden: {  }

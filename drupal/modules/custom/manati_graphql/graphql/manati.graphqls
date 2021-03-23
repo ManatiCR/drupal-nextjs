@@ -1,0 +1,138 @@
+schema {
+  query: Query
+}
+
+type Query {
+  landingPage(id: Int!): LandingPage
+  landingPages(
+    offset: Int = 0
+    limit: Int = 10
+  ): LandingPageConnection!
+  drupalConfig(
+    configFile: String!
+    configKey: String!
+  ): [DrupalConfig]!
+  route(path: String!): NodeInterface
+  mediaImage(id: Int!): MediaImage
+  mediaFile(id: Int!): MediaFile
+  mediaRemoteVideo(id: Int!): MediaRemoteVideo
+  paragraphLink(id: Int!): ParagraphLink
+}
+
+interface NodeInterface {
+  id: Int!
+  title: String!
+}
+
+type LandingPage implements NodeInterface {
+  id: Int!
+  title: String!
+  sections: [Section]
+  url: String
+}
+
+type Article implements NodeInterface {
+  id: Int!
+  title: String!
+  media: [MediaInterface]
+  url: String
+}
+
+
+type LandingPageConnection {
+  total: Int!
+  items: [LandingPage!]
+}
+
+type Section {
+  section_id: String!
+  variant: String
+  background: String
+  column_proportions: String
+  spacing_top: String
+  spacing_bottom: String
+  spacing_columns: String
+  equal_height: Int
+  side_spacing: Int
+  components: [Component]
+}
+
+type Component {
+  region: String!
+  uuid: String!
+  type: String!
+  block: LayoutBuilderBlock
+}
+
+interface LayoutBuilderBlock {
+  uuid: String!
+  label: String!
+}
+
+type BasicBlock implements LayoutBuilderBlock {
+  uuid: String!
+  label: String!
+  body: String
+  field_title: String
+}
+
+type Card implements LayoutBuilderBlock {
+  uuid: String!
+  label: String!
+  field_image: MediaImage
+  body: String
+  field_link: [ParagraphLink]
+  field_cta: [ParagraphCta]
+}
+
+type DrupalConfig {
+  name: String
+  value: String
+}
+
+interface MediaInterface {
+  id: ID!
+  label: String
+}
+
+type MediaImage implements MediaInterface {
+  id: ID!
+  label: String
+  alt: String
+  width: String
+  height: String
+  imageURL: String
+}
+
+type MediaFile implements MediaInterface {
+  id: ID!
+  label: String
+  fileURL: String
+  description: String
+}
+
+type MediaRemoteVideo implements MediaInterface {
+  id: ID!
+  label: String
+  videoURL: String
+}
+
+interface ParagraphInterface {
+  id: ID!
+}
+
+type ParagraphLink implements ParagraphInterface {
+  id: ID!
+  linkURL: String
+  linkTitle: String
+}
+
+type ParagraphCta implements ParagraphInterface {
+  id: ID!
+  file_link: ParagraphInterface
+}
+
+type ParagraphFile implements ParagraphInterface {
+  id: ID!
+  file: MediaFile
+}

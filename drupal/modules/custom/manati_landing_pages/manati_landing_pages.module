@@ -8,44 +8,69 @@
  * This file is no longer required in Drupal 8.
  * @see https://www.drupal.org/node/2217931
  */
+use Drupal\Core\Entity\FieldableEntityInterface;
+use Drupal\block_content\Entity\BlockContent;
+use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
+use GraphQL\Deferred;
 
-use Drupal\Core\Entity\EntityInterface;
+function manati_landing_pages_entity_view_alter(array &$build, Drupal\Core\Entity\EntityInterface $entity, \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display) {
 
-/**
- * Implements hook_form_alter().
- */
-function manati_landing_pages_form_alter(&$form, &$form_state, $form_id) {
-  $forms = ['node_landing_page_form', 'node_landing_page_edit_form'];
-  if (in_array($form_id, $forms)) {
-    // Hide field_blocks field.
-    $form['field_blocks']['#access'] = FALSE;
-  }
-}
+  if ($entity->bundle() === 'landing_page') {
+    if ($entity->hasField('layout_builder__layout')) {
+      $layout = $entity->get('layout_builder__layout');
+      $sections = $layout->getIterator();
 
-/**
- * Implements hook_ENTITY_TYPE_insert().
- */
-function manati_landing_pages_node_update(EntityInterface $node) {
-  if ($node->bundle() === 'landing_page') {
-    $block_ids = [];
-    foreach ($node->layout_builder__layout->getSections() as $section) {
-      foreach ($section->getComponents() as $component) {
-        $block = \Drupal::entityTypeManager()->getStorage('block_content')->loadRevision($component->get('configuration')['block_revision_id']);
-        $block_ids[] = [
-          'target_id' => $block->id(),
-        ];
+      foreach ($sections as $item) {
+        $section = $item->section;
+        $components = $section->getComponents();
+        foreach ($components as $component) {
+          $block = \Drupal::entityTypeManager()->getStorage('block_content')->loadByProperties(['uuid' => $component->getPlugin()->getConfiguration()['uuid']]);
+          $block = array_shift($block);
+          if ($block instanceof BlockContent && $block->field_image) {
+            $definition = $block->getFieldDefinition('field_image');
+            $type = $definition->getSetting('target_type');
+            $values = $block->get('field_image');
+            // dpm($values);
+            if ($values instanceof EntityReferenceFieldItemListInterface) {
+              $ids = array_map(function ($value) {
+                return $value['target_id'];
+              }, $values->getValue());
+
+              // dpm($ids);
+              // dpm($type);
+
+              // $buffer = \Drupal::service('graphql.buffer.entity');
+              // $resolver = $buffer->add($type, $ids);
+              // new Deferred(function () use ($resolver) {
+              //   return $resolver();
+              // });
+
+              foreach ($ids as $id) {
+                $media = \Drupal::entityTypeManager()->getStorage($type)->load($id);
+
+                dpm($media->field_media_image);
+
+                $definition = $media->getFieldDefinition('field_media_image');
+                $type = $definition->getSetting('target_type');
+                $values = $media->get('field_media_image');
+                dpm($definition);
+                dpm($type);
+                dpm($values);
+                $file = \Drupal::entityTypeManager()->getStorage('file')->load(1);
+                dpm($file->label());
+              }
+            }
+
+          }
+          // $field = array_shift($block)->field_image;
+          // $definiton = $block->getFieldDefinition('field_image');
+
+
+          // $media = \Drupal::entityTypeManager()->getStorage('media')->load(1);
+          // dpm($media->id());
+        }
       }
     }
-    $node->field_blocks = $block_ids;
-    drupal_register_shutdown_function('_manati_landing_pages_post_update', $node);
   }
-}
 
-/**
- * Helper function for save the node.
- */
-function _manati_landing_pages_post_update($node) {
-  if ($node) {
-    $node->save();
-  }
 }
