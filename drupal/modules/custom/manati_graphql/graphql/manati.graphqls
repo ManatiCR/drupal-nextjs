@@ -16,6 +16,7 @@ type Query {
   mediaImage(id: Int!): MediaImage
   mediaFile(id: Int!): MediaFile
   mediaRemoteVideo(id: Int!): MediaRemoteVideo
+  paragraphLink(id: Int!): ParagraphLink
 }
 
 interface NodeInterface {
@@ -80,6 +81,8 @@ type Card implements LayoutBuilderBlock {
   label: String!
   field_image: MediaImage
   body: String
+  field_link: [ParagraphLink]
+  field_cta: [ParagraphCta]
 }
 
 type DrupalConfig {
@@ -112,4 +115,24 @@ type MediaRemoteVideo implements MediaInterface {
   id: ID!
   label: String
   videoURL: String
+}
+
+interface ParagraphInterface {
+  id: ID!
+}
+
+type ParagraphLink implements ParagraphInterface {
+  id: ID!
+  linkURL: String
+  linkTitle: String
+}
+
+type ParagraphCta implements ParagraphInterface {
+  id: ID!
+  file_link: ParagraphInterface
+}
+
+type ParagraphFile implements ParagraphInterface {
+  id: ID!
+  file: MediaFile
 }
