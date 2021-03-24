@@ -12,65 +12,93 @@ use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\block_content\Entity\BlockContent;
 use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use GraphQL\Deferred;
+use Drupal\search_api\Item\ItemInterface;
+use Drupal\Core\Cache\CacheableMetadata;
 
 function manati_landing_pages_entity_view_alter(array &$build, Drupal\Core\Entity\EntityInterface $entity, \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display) {
 
-  if ($entity->bundle() === 'landing_page') {
-    if ($entity->hasField('layout_builder__layout')) {
-      $layout = $entity->get('layout_builder__layout');
-      $sections = $layout->getIterator();
+  // $storage = $this->entityTypeManager->getStorage('search_api_index');
+  // $entityType = $storage->getEntityType();
+  // $query = $storage->getQuery()
 
-      foreach ($sections as $item) {
-        $section = $item->section;
-        $components = $section->getComponents();
-        foreach ($components as $component) {
-          $block = \Drupal::entityTypeManager()->getStorage('block_content')->loadByProperties(['uuid' => $component->getPlugin()->getConfiguration()['uuid']]);
-          $block = array_shift($block);
-          if ($block instanceof BlockContent && $block->field_image) {
-            $definition = $block->getFieldDefinition('field_image');
-            $type = $definition->getSetting('target_type');
-            $values = $block->get('field_image');
-            // dpm($values);
-            if ($values instanceof EntityReferenceFieldItemListInterface) {
-              $ids = array_map(function ($value) {
-                return $value['target_id'];
-              }, $values->getValue());
+  // Loading all existing Search API Indexes.
 
-              // dpm($ids);
-              // dpm($type);
+  $index = \Drupal::entityTypeManager()->getStorage('search_api_index')->load('main_index');
 
-              // $buffer = \Drupal::service('graphql.buffer.entity');
-              // $resolver = $buffer->add($type, $ids);
-              // new Deferred(function () use ($resolver) {
-              //   return $resolver();
-              // });
+  $query = $index->query();
 
-              foreach ($ids as $id) {
-                $media = \Drupal::entityTypeManager()->getStorage($type)->load($id);
+  $results = $query->execute();
 
-                dpm($media->field_media_image);
+  // Load all entities at once, for better performance.
+  $results->preLoadResultItems();
+  $result_entities = array_map(static function (ItemInterface $item) {
+    return $item->getOriginalObject()->getValue();
+  }, $results->getResultItems());
 
-                $definition = $media->getFieldDefinition('field_media_image');
-                $type = $definition->getSetting('target_type');
-                $values = $media->get('field_media_image');
-                dpm($definition);
-                dpm($type);
-                dpm($values);
-                $file = \Drupal::entityTypeManager()->getStorage('file')->load(1);
-                dpm($file->label());
-              }
-            }
+  // Initialise response array.
+  $search_response = [];
 
-          }
-          // $field = array_shift($block)->field_image;
-          // $definiton = $block->getFieldDefinition('field_image');
+  // Get search response from results.
+  $search_response['items'] = $result_entities;
+
+  // Add the result count to the response.
+  $search_response['total'] = $results->getResultCount();
+
+  dpm($search_response);
 
 
-          // $media = \Drupal::entityTypeManager()->getStorage('media')->load(1);
-          // dpm($media->id());
+
+}
+
+function manati_landing_pages_helper($results) {
+  // Obtain result items.
+  $result_items = $results->getResultItems();
+  // Initialise response array.
+  $search_items = [];
+
+  // Loop through each item in the result set.
+  foreach ($result_items as &$item) {
+    // Load the response document into the search response array.
+    $item_fields = [];
+    foreach ($item->getFields() as $field) {
+
+      $field_values = $field->getValues();
+      $field_type = $field->getType();
+      $value = [];
+      // Fulltext multivalue fields have a different format.
+      if ($field_type == 'text') {
+        // Create a new array with text values instead of objects.
+        foreach ($field_values as $field_value) {
+          $value[] = $field_value->getText();
         }
       }
+      // For other types of fields we can just grab contents from the array.
+      else {
+        $value = $field_values;
+      }
+
+      $item_field = [
+        'label' => $field->getLabel(),
+        'id' => $field->getFieldIdentifier(),
+        'type' => $field_type,
+        'values' => $value,
+      ];
+
+      $item_fields[] = $item_field;
     }
+    $search_item = [
+      'id' => $item->getId(),
+      'boost' => $item->getBoost(),
+      'excerpt' => $item->getExcerpt(),
+      'relevance' => $item->getScore(),
+      'fields' => $item_fields,
+      // 'extra_data' => $item->getAllExtraData(),
+    ];
+
+    // Set the relevance score.
+    $search_items[] = $search_item;
+
   }
 
+  return $search_items;
 }

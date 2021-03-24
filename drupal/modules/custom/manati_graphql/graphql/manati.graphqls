@@ -12,19 +12,38 @@ type Query {
     configFile: String!
     configKey: String!
   ): [DrupalConfig]!
+  search: [SearchInterface]
 }
+
+interface SearchInterface {
+  total: Int!
+}
+
+type SearchNode implements SearchInterface {
+  total: Int!
+  items: [NodeInterface]!
+}
+
 
 interface NodeInterface {
   id: Int!
   title: String!
+  type: String!
 }
 
 type LandingPage implements NodeInterface {
   id: Int!
   title: String!
+  type: String!
   sections: [Section]
 }
 
+
+type Article implements NodeInterface {
+  id: Int!
+  title: String!
+  type: String!
+}
 
 type LandingPageConnection {
   total: Int!

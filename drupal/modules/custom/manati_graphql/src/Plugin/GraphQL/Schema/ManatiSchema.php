@@ -9,6 +9,7 @@ use Drupal\manati_graphql\Wrappers\QueryConnection;
 use Drupal\block_content\BlockContentInterface;
 use Drupal\media\MediaInterface;
 use GraphQL\Error\Error;
+use Drupal\node\NodeInterface;
 
 /**
  * Undocumented function.
@@ -28,11 +29,14 @@ class ManatiSchema extends SdlSchemaPluginBase {
     $registry = new ResolverRegistry();
 
     $this->addQueryFields($registry, $builder);
+    // $this->addSearchFields($registry, $builder);
     $this->addLandingPageFields($registry, $builder);
+    $this->addArticleFields($registry, $builder);
     $this->addSectionFields($registry, $builder);
     $this->addComponentFields($registry, $builder);
     $this->addLayoutBuilderBlockTypeResolver($registry);
     $this->addMediaBlockTypeResolver($registry);
+    $this->addNodeInterfaceTypeResolver($registry);
     $this->addBasicBlockFields($registry, $builder);
     $this->addCardFields($registry, $builder);
     $this->addMediaBlockImageFields($registry, $builder);
@@ -69,6 +73,11 @@ class ManatiSchema extends SdlSchemaPluginBase {
         ->map('config_key', $builder->fromArgument('configKey'))
     );
 
+    $registry->addFieldResolver('Query', 'search',
+      $builder->produce('query_search_api_search')
+        ->map('index_id', $builder->fromValue('main_index'))
+    );
+
   }
 
   /**
@@ -87,9 +96,41 @@ class ManatiSchema extends SdlSchemaPluginBase {
       )
     );
 
+    $registry->addFieldResolver('LandingPage', 'type',
+      $builder->compose(
+        $builder->produce('entity_bundle')
+          ->map('entity', $builder->fromParent())
+      )
+    );
+
     $registry->addFieldResolver('LandingPage', 'sections',
       $builder->compose(
         $builder->produce('layout_sections')
+          ->map('entity', $builder->fromParent())
+      )
+    );
+
+  }
+
+  /**
+   * Undocumented function.
+   */
+  protected function addArticleFields(ResolverRegistry $registry, ResolverBuilder $builder) {
+    $registry->addFieldResolver('Article', 'id',
+      $builder->produce('entity_id')
+        ->map('entity', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver('Article', 'title',
+      $builder->compose(
+        $builder->produce('entity_label')
+          ->map('entity', $builder->fromParent())
+      )
+    );
+
+    $registry->addFieldResolver('Article', 'type',
+      $builder->compose(
+        $builder->produce('entity_bundle')
           ->map('entity', $builder->fromParent())
       )
     );
@@ -187,6 +228,26 @@ class ManatiSchema extends SdlSchemaPluginBase {
         ->map('component', $builder->fromParent()))
 
     );
+  }
+
+  /**
+   * Undocumented function.
+   */
+  protected function addNodeInterfaceTypeResolver(ResolverRegistry $registry) {
+    // Tell GraphQL how to resolve the NodeInterface interface.
+    $registry->addTypeResolver('NodeInterface', function ($entity) {
+      if ($entity instanceof NodeInterface) {
+        switch ($entity->bundle()) {
+          case 'landing_page':
+            return 'LandingPage';
+
+          case 'article':
+            return 'Article';
+        }
+
+      }
+      throw new Error('Could not resolve content type.');
+    });
   }
 
   /**

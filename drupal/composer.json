@@ -42,6 +42,7 @@
     "drupal/graphql": "^4.0",
     "drupal/honeypot": "^2.0",
     "drupal/image_style_quality": "^1.4",
+    "drupal/jsonapi_search_api": "^1.0@RC",
     "drupal/layout_builder_browser": "^1.1",
     "drupal/layout_builder_iframe_modal": "^1.0",
     "drupal/media_entity_facebook": "^2.0",
