@@ -43,7 +43,6 @@ class ManatiSchema extends SdlSchemaPluginBase {
     $this->addFileFields($registry, $builder);
     // $this->addParagraphFields($registry, $builder);
     // $this->addMediaFileFields($registry, $builder);
-
     // Re-usable connection type fields.
     $this->addConnectionFields('LandingPageConnection', $registry, $builder);
 
@@ -76,6 +75,13 @@ class ManatiSchema extends SdlSchemaPluginBase {
     $registry->addFieldResolver('Query', 'search',
       $builder->produce('query_search_api_search')
         ->map('index_id', $builder->fromValue('main_index'))
+        ->map('range', $builder->fromArgument('range'))
+        ->map('sort', $builder->fromArgument('sort'))
+        ->map('fulltext', $builder->fromArgument('fulltext'))
+        ->map('conditions', $builder->fromArgument('conditions'))
+        ->map('languages', $builder->fromArgument('languages'))
+        ->map('solr_params', $builder->fromArgument('solrParams'))
+        ->map('condition_group', $builder->fromArgument('conditionGroup'))
     );
 
   }

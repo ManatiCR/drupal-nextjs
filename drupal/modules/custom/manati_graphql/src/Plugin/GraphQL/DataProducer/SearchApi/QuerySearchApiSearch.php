@@ -2,7 +2,6 @@
 
 namespace Drupal\manati_graphql\Plugin\GraphQL\DataProducer\SearchApi;
 
-use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -24,12 +23,36 @@ use Drupal\search_api\Item\ItemInterface;
  *     "index_id" = @ContextDefinition("string",
  *       label = @Translation("String"),
  *     ),
- *     "offset" = @ContextDefinition("integer",
- *       label = @Translation("Offset"),
+ *     "range" = @ContextDefinition("any",
+ *       label = @Translation("Range"),
  *       required = FALSE
  *     ),
- *     "limit" = @ContextDefinition("integer",
- *       label = @Translation("Limit"),
+ *     "sort" = @ContextDefinition("any",
+ *       label = @Translation("Sort"),
+ *       multiple = TRUE,
+ *       required = FALSE
+ *     ),
+ *     "fulltext" = @ContextDefinition("any",
+ *       label = @Translation("Full Text"),
+ *       required = FALSE
+ *     ),
+ *     "conditions" = @ContextDefinition("any",
+ *       label = @Translation("Conditions"),
+ *       multiple = TRUE,
+ *       required = FALSE
+ *     ),
+ *     "condition_group" = @ContextDefinition("any",
+ *       label = @Translation("Condition Group"),
+ *       required = FALSE
+ *     ),
+ *     "languages" = @ContextDefinition("any",
+ *       label = @Translation("Langauge"),
+ *       multiple = TRUE,
+ *       required = FALSE
+ *     ),
+ *     "solr_params" = @ContextDefinition("any",
+ *       label = @Translation("Solr Parameters"),
+ *       multiple = TRUE,
  *       required = FALSE
  *     )
  *   }
@@ -56,7 +79,7 @@ class QuerySearchApiSearch extends DataProducerPluginBase implements ContainerFa
   /**
    * The query object.
    *
-   * @var \Drupal\views\Plugin\views\query\QueryPluginBase
+   * @var \Drupal\search_api\Query\QueryInterface
    */
   private $query;
 
@@ -93,6 +116,8 @@ class QuerySearchApiSearch extends DataProducerPluginBase implements ContainerFa
    *   The plugin definition.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   Undocumented function.
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger
+   *   Undocumented function.
    *
    * @codeCoverageIgnore
    */
@@ -111,12 +136,12 @@ class QuerySearchApiSearch extends DataProducerPluginBase implements ContainerFa
   /**
    * Undocumented function.
    */
-  public function resolve($index_id, $offset, $limit, RefinableCacheableDependencyInterface $metadata) {
+  public function resolve(string $index_id, $range, $sort, $fulltext, $conditions, $condition_group, $languages, $solr_params) {
     // Load up the index passed in argument.
     $this->index = $this->entityTypeManager->getStorage('search_api_index')->load($index_id);
 
-    // Prepare a query for the respective Search API index.
-    $this->query = $this->index->query();
+    // Prepare the query with our arguments.
+    $this->prepareSearchQuery($range, $sort, $fulltext, $conditions, $condition_group, $languages, $solr_params);
 
     // Execute search.
     try {
@@ -153,48 +178,143 @@ class QuerySearchApiSearch extends DataProducerPluginBase implements ContainerFa
    * @args
    *  The arguments containing all the parameters to be loaded to the query.
    */
-  private function prepareSearchQuery($args) {
+  private function prepareSearchQuery($range, $sort, $fulltext, $conditions, $condition_group, $languages, $solr_params) {
 
     // Prepare a query for the respective Search API index.
     $this->query = $this->index->query();
 
     // Adding query conditions if they exist.
-    if ($args['conditions']) {
-      $this->addConditions($args['conditions']);
+    if ($conditions) {
+      $this->addConditions($conditions);
     }
     // Adding query group conditions if they exist.
-    if ($args['condition_group']) {
-      $this->addConditionGroup($args['condition_group']);
+    if ($condition_group) {
+      $this->addConditionGroup($condition_group);
     }
     // Adding Solr specific parameters if they exist.
-    if ($args['solr_params']) {
-      $this->addSolrParams($args['solr_params']);
+    if ($solr_params) {
+      $this->addSolrParams($solr_params);
     }
     // Restrict the search to specific languages.
-    if ($args['language']) {
-      $this->query->setLanguages($args['language']);
+    if ($languages) {
+      $this->query->setLanguages($languages);
     }
     // Set fulltext search parameters in the query.
-    if ($args['fulltext']) {
-      $this->setFulltextFields($args['fulltext']);
+    if ($fulltext) {
+      $this->setFulltextFields($fulltext);
     }
     // Adding range parameters to the query (e.g for pagination).
-    if ($args['range']) {
-      $this->query->range($args['range']['offset'], $args['range']['limit']);
+    if ($range) {
+      $this->query->range($range['offset'], $range['limit']);
     }
     // Adding sort parameters to the query.
-    if ($args['sort']) {
-      foreach ($args['sort'] as $sort) {
-        $this->query->sort($sort['field'], $sort['value']);
+    if ($sort) {
+      foreach ($sort as $sort_item) {
+        $this->query->sort($sort_item['field'], $sort_item['value']);
       }
     }
-    // Adding facets to the query.
-    if ($args['facets']) {
-      $this->setFacets($args['facets']);
+  }
+
+  /**
+   * Adds conditions to the Search API query.
+   *
+   * @conditions
+   *  The conditions to be added.
+   */
+  private function addConditions($conditions) {
+
+    // Loop through conditions to add them into the query.
+    foreach ($conditions as $condition) {
+      if (empty($condition['operator'])) {
+        $condition['operator'] = '=';
+      }
+      if ($condition['value'] == 'NULL') {
+        $condition['value'] = NULL;
+      }
+      // Set the condition in the query.
+      $this->query->addCondition($condition['name'], $condition['value'], $condition['operator']);
     }
-    // Adding more like this parameters to the query.
-    if ($args['more_like_this']) {
-      $this->setMlt($args['more_like_this']);
+  }
+
+  /**
+   * Adds a condition group to the Search API query.
+   *
+   * @condition_group
+   *  The conditions to be added.
+   */
+  private function addConditionGroup($condition_group) {
+
+    // Loop through the groups in the args.
+    foreach ($condition_group['groups'] as $group) {
+
+      // Set default conjunction and tags.
+      $group_conjunction = 'AND';
+      $group_tags = [];
+
+      // Set conjunction from args.
+      if (isset($group['conjunction'])) {
+
+        $group_conjunction = $group['conjunction'];
+      }
+      if (isset($group['tags'])) {
+        $group_tags = $group['tags'];
+      }
+
+      // Create a single condition group.
+      $condition_group = $this->query->createConditionGroup($group_conjunction, $group_tags);
+
+      // Loop through all conditions and add them to the Group.
+      foreach ($group['conditions'] as $condition) {
+
+        $condition_group->addCondition($condition['name'], $condition['value'], $condition['operator']);
+      }
+
+      // Merge the single groups to the condition group.
+      $this->query->addConditionGroup($condition_group);
+    }
+  }
+
+  /**
+   * Adds direct Solr parameters to the Search API query.
+   *
+   * @params
+   *  The conditions to be added.
+   */
+  private function addSolrParams($params) {
+
+    // Loop through conditions to add them into the query.
+    foreach ($params as $param) {
+      // Set the condition in the query.
+      $this->query->setOption('solr_param_' . $param['parameter'], $param['value']);
+    }
+  }
+
+  /**
+   * Sets fulltext fields in the Search API query.
+   *
+   * @fulltext
+   *  Parameters containing fulltext keywords to be used as well as optional
+   *  fields.
+   */
+  private function setFulltextFields($fulltext) {
+
+    // Check if keys is an array and if so set a conjunction.
+    if (is_array($fulltext['keys'])) {
+      // If no conjunction was specified use OR as default.
+      if (!empty($fulltext['conjunction'])) {
+        $fulltext['keys']['#conjunction'] = $fulltext['conjunction'];
+      }
+      else {
+        $fulltext['keys']['#conjunction'] = 'OR';
+      }
+    }
+
+    // Set the keys in the query.
+    $this->query->keys($fulltext['keys']);
+
+    // Set the optional fulltext fields if specified.
+    if (!empty($fulltext['fields'])) {
+      $this->query->setFulltextFields($fulltext['fields']);
     }
   }
 

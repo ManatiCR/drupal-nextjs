@@ -12,18 +12,57 @@ type Query {
     configFile: String!
     configKey: String!
   ): [DrupalConfig]!
-  search: [SearchInterface]
+  search(
+    range: RangeInput
+    sort: [SortInput]
+    fulltext: FulltextInput
+    conditions: [ConditionInput]
+    languages: [String]
+    solrParams: [SolrParameterInput]
+    conditionGroup: ConditionGroupInput
+  ): [SearchNode]
 }
 
-interface SearchInterface {
-  total: Int!
-}
 
-type SearchNode implements SearchInterface {
+type SearchNode {
   total: Int!
   items: [NodeInterface]!
 }
 
+input RangeInput {
+  offset: Int!
+  limit: Int!
+}
+
+input SortInput {
+  field: String!
+  value: String!
+}
+
+input FulltextInput {
+  keys: [String]!
+  fields: [String]
+  conjunction: String
+}
+
+input ConditionInput {
+  name: String!
+  value: String
+  operator: String
+
+}
+
+input ConditionGroupInput {
+  conditions: [ConditionInput]
+  groups: [ConditionGroupInput]
+  tags: [String]
+  conjunction: String = "AND"
+}
+
+input SolrParameterInput {
+  parameter: String!
+  value: String!
+}
 
 interface NodeInterface {
   id: Int!
