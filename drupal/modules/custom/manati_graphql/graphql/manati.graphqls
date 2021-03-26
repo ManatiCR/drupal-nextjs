@@ -13,13 +13,13 @@ type Query {
     configKey: String!
   ): [DrupalConfig]!
   search(
-    range: RangeInput
-    sort: [SortInput]
     fulltext: FulltextInput
+    range: RangeInput
     conditions: [ConditionInput]
+    conditionGroup: ConditionGroupInput
+    sort: [SortInput]
     languages: [String]
     solrParams: [SolrParameterInput]
-    conditionGroup: ConditionGroupInput
   ): [SearchNode]
 }
 

@@ -27,11 +27,6 @@ use Drupal\search_api\Item\ItemInterface;
  *       label = @Translation("Range"),
  *       required = FALSE
  *     ),
- *     "sort" = @ContextDefinition("any",
- *       label = @Translation("Sort"),
- *       multiple = TRUE,
- *       required = FALSE
- *     ),
  *     "fulltext" = @ContextDefinition("any",
  *       label = @Translation("Full Text"),
  *       required = FALSE
@@ -43,6 +38,11 @@ use Drupal\search_api\Item\ItemInterface;
  *     ),
  *     "condition_group" = @ContextDefinition("any",
  *       label = @Translation("Condition Group"),
+ *       required = FALSE
+ *     ),
+ *     "sort" = @ContextDefinition("any",
+ *       label = @Translation("Sort"),
+ *       multiple = TRUE,
  *       required = FALSE
  *     ),
  *     "languages" = @ContextDefinition("any",
@@ -136,12 +136,12 @@ class QuerySearchApiSearch extends DataProducerPluginBase implements ContainerFa
   /**
    * Undocumented function.
    */
-  public function resolve(string $index_id, $range, $sort, $fulltext, $conditions, $condition_group, $languages, $solr_params) {
+  public function resolve(string $index_id, $range, $fulltext, $conditions, $condition_group, $sort, $languages, $solr_params) {
     // Load up the index passed in argument.
     $this->index = $this->entityTypeManager->getStorage('search_api_index')->load($index_id);
 
     // Prepare the query with our arguments.
-    $this->prepareSearchQuery($range, $sort, $fulltext, $conditions, $condition_group, $languages, $solr_params);
+    $this->prepareSearchQuery($range, $fulltext, $conditions, $condition_group, $sort, $languages, $solr_params);
 
     // Execute search.
     try {
@@ -178,7 +178,7 @@ class QuerySearchApiSearch extends DataProducerPluginBase implements ContainerFa
    * @args
    *  The arguments containing all the parameters to be loaded to the query.
    */
-  private function prepareSearchQuery($range, $sort, $fulltext, $conditions, $condition_group, $languages, $solr_params) {
+  private function prepareSearchQuery($range, $fulltext, $conditions, $condition_group, $sort, $languages, $solr_params) {
 
     // Prepare a query for the respective Search API index.
     $this->query = $this->index->query();
@@ -213,6 +213,7 @@ class QuerySearchApiSearch extends DataProducerPluginBase implements ContainerFa
         $this->query->sort($sort_item['field'], $sort_item['value']);
       }
     }
+
   }
 
   /**
@@ -222,7 +223,6 @@ class QuerySearchApiSearch extends DataProducerPluginBase implements ContainerFa
    *  The conditions to be added.
    */
   private function addConditions($conditions) {
-
     // Loop through conditions to add them into the query.
     foreach ($conditions as $condition) {
       if (empty($condition['operator'])) {
@@ -234,6 +234,7 @@ class QuerySearchApiSearch extends DataProducerPluginBase implements ContainerFa
       // Set the condition in the query.
       $this->query->addCondition($condition['name'], $condition['value'], $condition['operator']);
     }
+
   }
 
   /**
@@ -243,7 +244,6 @@ class QuerySearchApiSearch extends DataProducerPluginBase implements ContainerFa
    *  The conditions to be added.
    */
   private function addConditionGroup($condition_group) {
-
     // Loop through the groups in the args.
     foreach ($condition_group['groups'] as $group) {
 
@@ -272,6 +272,7 @@ class QuerySearchApiSearch extends DataProducerPluginBase implements ContainerFa
       // Merge the single groups to the condition group.
       $this->query->addConditionGroup($condition_group);
     }
+
   }
 
   /**
@@ -281,12 +282,12 @@ class QuerySearchApiSearch extends DataProducerPluginBase implements ContainerFa
    *  The conditions to be added.
    */
   private function addSolrParams($params) {
-
     // Loop through conditions to add them into the query.
     foreach ($params as $param) {
       // Set the condition in the query.
       $this->query->setOption('solr_param_' . $param['parameter'], $param['value']);
     }
+
   }
 
   /**
@@ -297,7 +298,6 @@ class QuerySearchApiSearch extends DataProducerPluginBase implements ContainerFa
    *  fields.
    */
   private function setFulltextFields($fulltext) {
-
     // Check if keys is an array and if so set a conjunction.
     if (is_array($fulltext['keys'])) {
       // If no conjunction was specified use OR as default.
@@ -316,6 +316,7 @@ class QuerySearchApiSearch extends DataProducerPluginBase implements ContainerFa
     if (!empty($fulltext['fields'])) {
       $this->query->setFulltextFields($fulltext['fields']);
     }
+
   }
 
 }
