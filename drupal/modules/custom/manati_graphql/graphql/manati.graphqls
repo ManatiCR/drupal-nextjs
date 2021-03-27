@@ -21,6 +21,7 @@ type Query {
     languages: [String]
     solrParams: [SolrParameterInput]
   ): [SearchNode]
+  terms(vocabulary: String!): [Term]
 }
 
 
@@ -62,6 +63,12 @@ input ConditionGroupInput {
 input SolrParameterInput {
   parameter: String!
   value: String!
+}
+
+type Term {
+  id: ID!
+  name: String!
+  children: [Term]
 }
 
 interface NodeInterface {

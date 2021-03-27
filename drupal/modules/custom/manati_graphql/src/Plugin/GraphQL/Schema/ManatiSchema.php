@@ -31,6 +31,7 @@ class ManatiSchema extends SdlSchemaPluginBase {
     $this->addQueryFields($registry, $builder);
     // $this->addSearchFields($registry, $builder);
     $this->addLandingPageFields($registry, $builder);
+    $this->addTermFields($registry, $builder);
     $this->addArticleFields($registry, $builder);
     $this->addSectionFields($registry, $builder);
     $this->addComponentFields($registry, $builder);
@@ -65,6 +66,14 @@ class ManatiSchema extends SdlSchemaPluginBase {
         ->map('offset', $builder->fromArgument('offset'))
         ->map('limit', $builder->fromArgument('limit'))
     );
+
+    $registry->addFieldResolver('Query', 'terms',
+      $builder->produce('taxonomy_load_tree')
+        ->map('vid', $builder->fromArgument('vocabulary'))
+        ->map('parent', $builder->fromValue(0))
+        ->map('max_depth', $builder->fromValue(1))
+    );
+
 
     $registry->addFieldResolver('Query', 'drupalConfig',
       $builder->produce('query_drupal_config')
@@ -113,6 +122,35 @@ class ManatiSchema extends SdlSchemaPluginBase {
       $builder->compose(
         $builder->produce('layout_sections')
           ->map('entity', $builder->fromParent())
+      )
+    );
+
+  }
+
+  /**
+   * Undocumented function.
+   */
+  protected function addTermFields(ResolverRegistry $registry, ResolverBuilder $builder) {
+    $registry->addFieldResolver('Term', 'id',
+      $builder->produce('entity_id')
+        ->map('entity', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver('Term', 'name',
+      $builder->compose(
+        $builder->produce('entity_label')
+          ->map('entity', $builder->fromParent())
+      )
+    );
+
+    $registry->addFieldResolver('Term', 'children',
+      $builder->compose(
+        $builder->produce('taxonomy_load_tree')
+          ->map('vid', $builder->produce('entity_bundle')
+            ->map('entity', $builder->fromParent()))
+          ->map('parent', $builder->produce('entity_id')
+            ->map('entity', $builder->fromParent()))
+          ->map('max_depth', $builder->fromValue(1))
       )
     );
 
