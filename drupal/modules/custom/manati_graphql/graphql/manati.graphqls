@@ -57,7 +57,7 @@ input ConditionGroupInput {
   conditions: [ConditionInput]
   groups: [ConditionGroupInput]
   tags: [String]
-  conjunction: String = "AND"
+  conjunction: String
 }
 
 input SolrParameterInput {

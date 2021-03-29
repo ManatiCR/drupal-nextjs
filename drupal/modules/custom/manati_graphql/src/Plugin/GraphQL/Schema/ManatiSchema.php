@@ -74,7 +74,6 @@ class ManatiSchema extends SdlSchemaPluginBase {
         ->map('max_depth', $builder->fromValue(1))
     );
 
-
     $registry->addFieldResolver('Query', 'drupalConfig',
       $builder->produce('query_drupal_config')
         ->map('config_file', $builder->fromArgument('configFile'))
