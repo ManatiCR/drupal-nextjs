@@ -1,19 +1,28 @@
-uuid: 40b389d5-d150-4df0-acc6-bfffe52580a5
+uuid: 5b678a15-4711-4865-baee-4a0e45be1a7e
 langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.landing_page.layout_builder__layout
-    - node.type.landing_page
+    - field.field.node.article.body
+    - node.type.article
   module:
     - path
-_core:
-  default_config_hash: 1imzFcdW38T5DdEFom0GpytHRhDhL1EvGPbt75kqmoc
-id: node.landing_page.default
+    - text
+id: node.article.default
 targetEntityType: node
-bundle: landing_page
+bundle: article
 mode: default
 content:
+  body:
+    type: text_textarea_with_summary
+    weight: 121
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+      show_summary: false
+    third_party_settings: {  }
+    region: content
   created:
     type: datetime_timestamp
     weight: 10
@@ -65,5 +74,4 @@ content:
       match_limit: 10
     region: content
     third_party_settings: {  }
-hidden:
-  layout_builder__layout: true
+hidden: {  }

@@ -1,19 +1,19 @@
-uuid: ba30c73c-928f-4dbc-a0fb-12a41c2a2a00
+uuid: ba353fce-fd12-4c60-b5bf-0862f4dddc67
 langcode: en
 status: true
 dependencies:
   module:
-    - block_content
-    - node
-id: node.field_blocks
-field_name: field_blocks
-entity_type: node
+    - media
+    - paragraphs
+id: paragraph.field_file
+field_name: field_file
+entity_type: paragraph
 type: entity_reference
 settings:
-  target_type: block_content
+  target_type: media
 module: core
 locked: false
-cardinality: -1
+cardinality: 1
 translatable: true
 indexes: {  }
 persist_with_no_fields: false

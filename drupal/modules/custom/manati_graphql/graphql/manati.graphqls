@@ -1,0 +1,161 @@
+schema {
+  query: Query
+}
+
+type Query {
+  landingPage(id: Int!): LandingPage
+  landingPages(
+    offset: Int = 0
+    limit: Int = 10
+  ): LandingPageConnection!
+  drupalConfig(
+    configFile: String!
+    configKey: String!
+  ): [DrupalConfig]!
+  search(
+    fulltext: FulltextInput
+    range: RangeInput
+    conditions: [ConditionInput]
+    conditionGroup: ConditionGroupInput
+    sort: [SortInput]
+    languages: [String]
+    solrParams: [SolrParameterInput]
+  ): [SearchNode]
+  terms(vocabulary: String!): [Term]
+}
+
+
+type SearchNode {
+  total: Int!
+  items: [NodeInterface]!
+}
+
+input RangeInput {
+  offset: Int!
+  limit: Int!
+}
+
+input SortInput {
+  field: String!
+  value: String!
+}
+
+input FulltextInput {
+  keys: [String]!
+  fields: [String]
+  conjunction: String
+}
+
+input ConditionInput {
+  name: String!
+  value: String
+  operator: String
+
+}
+
+input ConditionGroupInput {
+  conditions: [ConditionInput]
+  groups: [ConditionGroupInput]
+  tags: [String]
+  conjunction: String
+}
+
+input SolrParameterInput {
+  parameter: String!
+  value: String!
+}
+
+type Term {
+  id: ID!
+  name: String!
+  children: [Term]
+}
+
+interface NodeInterface {
+  id: Int!
+  title: String!
+  type: String!
+}
+
+type LandingPage implements NodeInterface {
+  id: Int!
+  title: String!
+  type: String!
+  sections: [Section]
+}
+
+
+type Article implements NodeInterface {
+  id: Int!
+  title: String!
+  type: String!
+}
+
+type LandingPageConnection {
+  total: Int!
+  items: [LandingPage!]
+}
+
+type Section {
+  section_id: String!
+  variant: String
+  background: String
+  column_proportions: String
+  spacing_top: String
+  spacing_bottom: String
+  spacing_columns: String
+  equal_height: Int
+  side_spacing: Int
+  components: [Component]
+}
+
+type Component {
+  region: String!
+  uuid: String!
+  type: String!
+  block: LayoutBuilderBlock
+}
+
+interface LayoutBuilderBlock {
+  uuid: String!
+  label: String!
+}
+
+type BasicBlock implements LayoutBuilderBlock {
+  uuid: String!
+  label: String!
+  body: String
+  field_title: String
+}
+
+type Card implements LayoutBuilderBlock {
+  uuid: String!
+  label: String!
+  body: String
+  field_image: [MediaBlock]
+}
+
+interface MediaBlock {
+  id: Int!
+}
+
+type MediaBlockImage implements MediaBlock {
+  id: Int!
+  alt: String
+  file: [File]
+}
+
+type MediaBlockFile implements MediaBlock {
+  id: Int!
+  file: [File]
+}
+
+type File {
+  url: String
+  name: String
+}
+
+type DrupalConfig {
+  name: String
+  value: String
+}
